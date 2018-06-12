@@ -3,7 +3,7 @@ import React, { Component } from 'react';
 import {Text} from 'react-native';
 
 
-export default class App extends Component {
+export class Container extends Component {
   constructor() {
     super();
     this.state= {

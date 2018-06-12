@@ -1,18 +1,14 @@
 import React, { Component } from 'react';
-import { AppRegistry   ,Platform,
-  StyleSheet,
-  Text,
-  View,
-  WebView,
-  Dimensions} from 'react-native';
+import { Text,View} from 'react-native';
+import {test} from '../TestFramework/kompot';
 
-export default class App2 extends Component {
+export default class SomeComponent extends Component {
   render() {
     return (
       <View style={{width: '100%', height: '100%'}}>
-      <Text>Nir yosef test************************!</Text>
+      <Text>Nir yosef test************************!!!</Text>
       </View>
     );
   }
 }
-global.setComponentToTest(App2);
+test(SomeComponent)
