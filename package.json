@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
+    "temp-build": "react-native bundle --entry-file /Users/niryo/git/Kompot/temp/index.js --platform ios --dev false --bundle-output /Users/niryo/git/Kompot/temp/main.bundle.js --assets-dest /Users/niryo/git/Kompot/temp",
     "test": "jest"
   },
   "dependencies": {
