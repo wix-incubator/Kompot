@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import { Text,View} from 'react-native';
 import {test} from '../TestFramework/kompot';
-
 export default class SomeComponent extends Component {
   render() {
     return (

@@ -1,6 +1,5 @@
 import { AppRegistry} from 'react-native';
-import {Container} from './src/Container';
-
+import {Container} from './Container';
 AppRegistry.registerComponent('Kompot', () => Container);
 
 let onComponentToTestReadyListener;
