@@ -57,3 +57,4 @@ buck-out/
 
 temp/main.bundle.js
 temp/main.bundle.js.meta
+package-lock.json
