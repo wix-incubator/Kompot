@@ -10,6 +10,10 @@ global.setComponentToTest = function(ComponentToTest){
   onComponentToTestReadyListener(ComponentToTest);
 }
 
+global.Kompot = global.setComponentToTest;
+//mock all mocha's globals:
+global.describe = () => {}
+
 fetchAndEvaluateBundle();
 async function fetchAndEvaluateBundle() {
   try {

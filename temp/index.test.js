@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { Text,View} from 'react-native';
-import {test} from '../TestFramework/kompot';
 // import 'babel-polyfill';
 
 class SomeComponent extends React.Component {
@@ -13,8 +12,8 @@ class SomeComponent extends React.Component {
   }
 }
 
+Kompot(SomeComponent)
 describe('bla', function () {
-  it('should bla', async function(){
-    test(SomeComponent)
+  it('should bla', function(){
   })
 })

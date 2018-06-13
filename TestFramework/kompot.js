@@ -1,3 +1,3 @@
-export function test(Component){
-  global.setComponentToTest(Component);
+export function init() {
+  global.Kompot = () => {}
 }

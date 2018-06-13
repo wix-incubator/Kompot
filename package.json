@@ -4,9 +4,9 @@
   "private": true,
   "scripts": {
     "start": "react-native start --root ./app",
-    "temp-build": "react-native bundle --entry-file /Users/niryo/git/Kompot/temp/index.js --platform ios --dev false --bundle-output /Users/niryo/git/Kompot/temp/main.bundle.js --assets-dest /Users/niryo/git/Kompot/temp",
+    "temp-build": "react-native bundle --entry-file /Users/niryo/git/Kompot/temp/index.test.js --platform ios --dev false --bundle-output /Users/niryo/git/Kompot/temp/main.bundle.js --assets-dest /Users/niryo/git/Kompot/temp",
     "test": "jest",
-    "mocha": "mocha --compilers js:babel-core/register -- temp/*.test.js"
+    "mocha": "mocha -r ./temp/init.js --compilers js:babel-core/register -- temp/*.test.js"
   },
   "dependencies": {
     "react": "16.3.1",
