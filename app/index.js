@@ -5,7 +5,7 @@ import './fakeMochaGlobals';
 
 async function fetchAndEvaluateBundle() {
   try {
-    const response = await fetch('http://localhost:1234/main.bundle.js', { method: 'GET', headers: { "Content-Type": "text/plain"} });
+    const response = await fetch('http://localhost:1234', { method: 'GET', headers: { "Content-Type": "text/plain"} });
     const content = await response.text();
     eval(content);
   } catch (e) {
