@@ -1,5 +1,17 @@
 import { AppRegistry} from 'react-native';
 import {Container} from './Container';
+import React from 'react';
+import './fakeMochaGlobals';
+
+async function fetchAndEvaluateBundle() {
+  try {
+    const response = await fetch('http://localhost:1234/main.bundle.js', { method: 'GET', headers: { "Content-Type": "text/plain"} });
+    const content = await response.text();
+    eval(content);
+  } catch (e) {
+    console.error('Cannot fetch bundle: ',e.message);
+  }
+}
 AppRegistry.registerComponent('Kompot', () => Container);
 
 let onComponentToTestReadyListener;
@@ -11,16 +23,5 @@ global.setComponentToTest = function(ComponentToTest){
 }
 
 global.Kompot = global.setComponentToTest;
-//mock all mocha's globals:
-global.describe = () => {}
-
+global.React = React; //todo: try to remove
 fetchAndEvaluateBundle();
-async function fetchAndEvaluateBundle() {
-  try {
-    const response = await fetch('http://localhost:1234/main.bundle.js', { method: 'GET', headers: { "Content-Type": "text/plain"} });
-    const content = await response.text();
-    eval(content);
-  } catch (e) {
-    console.error('Cannot fetch bundle: ',e.message);
-  }
-}

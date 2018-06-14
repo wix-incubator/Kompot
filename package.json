@@ -1,6 +1,7 @@
 {
   "name": "kompot",
   "version": "0.0.1",
+  "main": "testFramework/kompot.js",
   "private": true,
   "scripts": {
     "start": "react-native start --root ./app",

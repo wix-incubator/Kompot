@@ -1,0 +1,14 @@
+global.afterEach = () => {};
+global.after = () => {};
+global.beforeEach = () => {};
+global.before = () => {};
+global.describe = () => {};
+global.it = () => {};
+global.xit = () => {};
+global.setup = () => {};
+global.suiteSetup = () => {};
+global.suiteTeardown = () => {};
+global.suite = () => {};
+global.teardown = () => {};
+global.test = () => {};
+global.run = () => {};
