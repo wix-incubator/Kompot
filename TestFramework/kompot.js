@@ -1,8 +1,9 @@
-import {StyleSheet} from 'react-native';
-StyleSheet.create = (obj) => obj;
-
-export function Kompot(componentToTest) {
-  if(global.Kompot){
-    global.Kompot(componentToTest)
+module.exports = {
+  Kompot: function Kompot(getComponent) {
+    if (global.Kompot) {
+      const StyleSheet = require('react-native').StyleSheet;
+      StyleSheet.create = (obj) => obj;
+      global.Kompot(getComponent())
+    }
   }
-}
+};

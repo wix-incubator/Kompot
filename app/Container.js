@@ -14,7 +14,7 @@ export class Container extends Component {
   }
   render() {
     const TestedComponent = this.state.TestedComponent;
-    return this.state.TestedComponent? TestedComponent : <Text>Loading...</Text>;
+    return this.state.TestedComponent? <TestedComponent/> : <Text>Loading...</Text>;
   }
 }
 
