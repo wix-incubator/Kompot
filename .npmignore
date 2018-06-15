@@ -1,7 +1,4 @@
-*/fastlane/screenshots
-
-*.jsbundle
-
-temp/main.bundle.js
-temp/main.bundle.js.meta
-package-lock.json
+*
+!server/*
+!testFramework/*
+!package.json

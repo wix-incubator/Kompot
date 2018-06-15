@@ -2,7 +2,10 @@
   "name": "kompot",
   "version": "0.0.1",
   "main": "testFramework/kompot.js",
-  "private": true,
+  "bin": {
+    "kompot-server": "./server/server.js",
+    "kompot-build": "./scripts/generateBundles.js"
+  },
   "scripts": {
     "start": "react-native start --root ./app",
     "temp-build": "react-native bundle --entry-file /Users/niryo/git/Kompot/temp/index.test.js --platform ios --dev false --bundle-output /Users/niryo/git/Kompot/temp/main.bundle.js --assets-dest /Users/niryo/git/Kompot/temp",
