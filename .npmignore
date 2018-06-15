@@ -2,3 +2,4 @@
 !server/*
 !testFramework/*
 !package.json
+!scripts/*
