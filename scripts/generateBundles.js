@@ -14,12 +14,12 @@ console.log(filePathList.join('\n'));
 
 filePathList.forEach(filePath => {
     const fileName = path.basename(filePath, KOMPOT_FILE_EXTENTION);
-    exec(`react-native bundle --entry-file ${filePath} --platform ios --dev false --bundle-output ${GENERATED_BUNDLES_DIR}/${fileName}.bundle.js --assets-dest ${GENERATED_BUNDLES_DIR}`, (err, stdout, stderr) => {
+    exec(`node_modules/.bin/webpack --mode production --config node_modules/kompot/webpackUtils/webpack.config.js  --entry  ${filePath} --output ${GENERATED_BUNDLES_DIR}/${fileName}.bundle.js`, (err, stdout, stderr) => {
         if (err) {
             console.error(`exec error: ${err}`);
             return;
         }
-        console.log(`successfully created: ${GENERATED_BUNDLES_DIR}/${fileName}.bundle.js`);
+        console.log(stdout);
     });
 });
 

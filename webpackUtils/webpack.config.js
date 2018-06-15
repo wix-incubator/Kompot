@@ -1,11 +1,8 @@
 module.exports = {
-  output: {
-      path: __dirname
-      },
   resolve: {
     alias: {
-      'react-native': './fake-react-native',
-      'react': './fake-react'
+      'react-native': __dirname +'/fake-react-native.js',
+      'react': __dirname + '/fake-react.js'
     }
   },
   module: {
