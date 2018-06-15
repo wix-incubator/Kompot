@@ -2,6 +2,8 @@ import { AppRegistry} from 'react-native';
 import {Container} from './Container';
 import React from 'react';
 import './fakeMochaGlobals';
+import ReactNative from 'react-native';
+
 
 async function fetchGlobals(){
   try {
@@ -33,6 +35,8 @@ global.setComponentToTest = function(ComponentToTest){
 }
 
 global.Kompot = global.setComponentToTest;
-global.React = React; //todo: try to remove
+global.React = React;
+global.ReactNative = ReactNative;
+
 fetchGlobals();
 fetchAndEvaluateBundle();
