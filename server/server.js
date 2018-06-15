@@ -10,7 +10,7 @@ app.get('/setCurrentComponent', (req, res) => {
 })
 
 app.get('/', (req, res) => {
-  const path =  `${ __dirname}/../../../.kompot/`;
+  const path =  `${ __dirname}/../..generatedBundles/`;
   const fileName = `${currentComponent}.bundle.js`;
   options ={
     root: path
