@@ -1,6 +1,6 @@
 {
   "name": "kompot",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "main": "testFramework/kompot.js",
   "bin": {
     "kompot-server": "./server/server.js",
