@@ -5,6 +5,13 @@ const app = express();
 let currentComponent;
 let globals = {};
 let props = {};
+let serverMode='FORGET';
+
+app.get('/setServerMode', (req, res) => {
+  serverMode = req.query.mode;
+  console.log('Setting server mode be', currentComponent);
+  res.send();
+})
 
 app.get('/setCurrentComponent', (req, res) => {
   currentComponent = req.query.componentName;
@@ -20,7 +27,9 @@ app.get('/setGlobals', (req, res) => {
 
 app.get('/getGlobals', (req, res) => {
   res.send(globals);
-  globals = {};
+  if(serverMode === 'FORGET'){
+    globals = {};
+  }
 })
 
 app.get('/setProps', (req, res) => {
@@ -31,7 +40,9 @@ app.get('/setProps', (req, res) => {
 
 app.get('/getProps', (req, res) => {
   res.send(props);
-  props = {};
+  if(serverMode === 'FORGET'){
+    props = {};
+  }
 })
 
 app.get('/', (req, res) => {
