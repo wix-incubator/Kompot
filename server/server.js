@@ -9,7 +9,7 @@ let serverMode='FORGET';
 
 app.get('/setServerMode', (req, res) => {
   serverMode = req.query.mode;
-  console.log('Setting server mode be', currentComponent);
+  console.log('Setting server mode to be', serverMode);
   res.send();
 })
 
