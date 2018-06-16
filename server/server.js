@@ -2,10 +2,11 @@ const express = require('express')
 const fs = require('fs');
 const app = express();
 const ArgumentParser = require('argparse').ArgumentParser;
+
+const parser = new ArgumentParser();
 parser.addArgument(['-p', '--port'], {
   help: `Specify server port`,
-  type: 'int',
-  action: 'storeConst'
+  type: 'int'
 });
 const args = parser.parseArgs();
 
