@@ -3,8 +3,7 @@
   "version": "1.0.0",
   "main": "testFramework/kompot.js",
   "bin": {
-    "kompot-server": "./server/server.js",
-    "kompot-build": "./scripts/generateBundles.js"
+    "kompot": "./scripts/kompot-cli.js"
   },
   "scripts": {
     "start": "react-native start --root ./app",
@@ -13,6 +12,7 @@
     "mocha": "mocha -r ./temp/init.js --compilers js:babel-core/register -- temp/*.test.js"
   },
   "dependencies": {
+    "argparse": "^1.0.10",
     "babel-loader": "^7.1.4",
     "express": "^4.16.3",
     "node-fetch": "^2.1.2",
