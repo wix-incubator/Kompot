@@ -46,6 +46,9 @@ app.get('/getProps', (req, res) => {
 })
 
 app.get('/', (req, res) => {
+  if(!currentComponent){
+    res.send();
+  }
   const path =  `${ __dirname}/../.generatedBundles/`;
   const fileName = `${currentComponent}.bundle.js`;
   options ={
