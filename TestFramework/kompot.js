@@ -1,27 +1,38 @@
 module.exports = {
-  Kompot: function Kompot(getComponent) {
-    if (global.Kompot) {
+  require: function (getComponent) {
+    if (global.KompotApp) {
       const StyleSheet = require('react-native').StyleSheet;
       StyleSheet.create = (obj) => obj;
-      global.Kompot(getComponent())
+      global.KompotApp(getComponent())
     }
-  },
-  inject: function(conditionalCode){
-    if (global.Kompot) {
-      Object.keys(conditionalCode).forEach(key => {
-        if(global[key]) {
-          conditionalCode[key]();
+    return {
+      mock: function(mocks) {
+        if (global.KompotApp) {
+          Object.keys(mocks).forEach(key => {
+            if(global[key]) {
+              mocks[key]();
+            }
+          });
         }
-      });
-    }
+        return this;
+      }
+    };
   },
-  with: async function(globals) {
-    const query = globals.join('=true&');
+ 
+  testComponent: function(name) {
     const fetch = require('node-fetch');
-    fetch(`http://localhost:1234/setGlobals?${query}`);
-  },
-  initComponent: async function(name) {
-    const fetch = require('node-fetch');
-    fetch(`http://localhost:1234/setCurrentComponent?componentName=${name}`);
+    const requests = [];
+    requests.push(fetch(`http://localhost:1234/setCurrentComponent?componentName=${name}`));
+
+    return {
+      withMocks: function(globals) {
+        const query = globals.join('=true&');
+        requests.push(fetch(`http://localhost:1234/setGlobals?${query}`));
+        return this;
+      },
+      mount : async function(){
+        return Promise.all(requests);
+      }
+    };
   }
 };

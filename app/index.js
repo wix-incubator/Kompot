@@ -34,7 +34,7 @@ global.setComponentToTest = function(ComponentToTest){
   onComponentToTestReadyListener(ComponentToTest);
 }
 
-global.Kompot = global.setComponentToTest;
+global.KompotApp = global.setComponentToTest;
 global.React = React;
 global.ReactNative = ReactNative;
 
