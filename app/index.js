@@ -7,7 +7,7 @@ import ReactNative from 'react-native';
 AppRegistry.registerComponent('Kompot', () => Container);
 
 let onComponentToTestReadyListener;
-let props;
+let props={};
 global.onComponentToTestReady = function(listener) {
   onComponentToTestReadyListener = listener;
 }
@@ -20,6 +20,7 @@ global.React = React;
 global.ReactNative = ReactNative;
 
 fetchAndSetGlobals();
+fetchAndSetProps();
 fetchAndEvaluateBundle();
 
 
@@ -36,7 +37,15 @@ async function fetchAndSetGlobals(){
 async function fetchAndSetProps(){
   try {
     const response = await fetch('http://localhost:1234/getProps', { method: 'GET', headers: { "Content-Type": "application/json"} });
-    props = await response.json();
+    let jsonProps = await response.json();
+    Object.keys(jsonProps).map(key => {
+      let value = decodeURIComponent(jsonProps[key]);
+      if(typeof value ==='string' && value.startsWith('FUNCTION#')){
+        value = value.replace('FUNCTION#','');
+        value = eval(value);
+      }
+      props[key] = value;
+    });
   } catch (e) {
     console.error('Cannot fetch props: ',e.message);
   }
