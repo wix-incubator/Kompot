@@ -6,15 +6,17 @@ export class Container extends Component {
   constructor() {
     super();
     this.state= {
-      TestedComponent: undefined
+      TestedComponent: undefined,
+      props: undefined
     }
   }
   componentDidMount() {
-    global.onComponentToTestReady((TestedComponent) => this.setState({TestedComponent}));
+    global.onComponentToTestReady((TestedComponent, props) => this.setState({TestedComponent,props}));
   }
   render() {
     const TestedComponent = this.state.TestedComponent;
-    return this.state.TestedComponent? <TestedComponent/> : <Text>Loading...</Text>;
+    const props = this.state.props;
+    return this.state.TestedComponent? <TestedComponent {...props} /> : <Text>Loading...</Text>;
   }
 }
 

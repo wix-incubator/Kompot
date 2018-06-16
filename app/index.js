@@ -4,14 +4,41 @@ import React from 'react';
 import './fakeMochaGlobals';
 import ReactNative from 'react-native';
 
+AppRegistry.registerComponent('Kompot', () => Container);
 
-async function fetchGlobals(){
+let onComponentToTestReadyListener;
+let props;
+global.onComponentToTestReady = function(listener) {
+  onComponentToTestReadyListener = listener;
+}
+global.setComponentToTest = function(ComponentToTest){
+  onComponentToTestReadyListener(ComponentToTest, props);
+}
+
+global.KompotApp = global.setComponentToTest;
+global.React = React;
+global.ReactNative = ReactNative;
+
+fetchAndSetGlobals();
+fetchAndEvaluateBundle();
+
+
+async function fetchAndSetGlobals(){
   try {
     const response = await fetch('http://localhost:1234/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json"} });
     const globals = await response.json();
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
-    console.error('Cannot fetch bundle: ',e.message);
+    console.error('Cannot fetch globals: ',e.message);
+  }
+}
+
+async function fetchAndSetProps(){
+  try {
+    const response = await fetch('http://localhost:1234/getProps', { method: 'GET', headers: { "Content-Type": "application/json"} });
+    props = await response.json();
+  } catch (e) {
+    console.error('Cannot fetch props: ',e.message);
   }
 }
 
@@ -24,19 +51,3 @@ async function fetchAndEvaluateBundle() {
     console.error('Cannot fetch bundle: ',e.message);
   }
 }
-AppRegistry.registerComponent('Kompot', () => Container);
-
-let onComponentToTestReadyListener;
-global.onComponentToTestReady = function(listener) {
-  onComponentToTestReadyListener = listener;
-}
-global.setComponentToTest = function(ComponentToTest){
-  onComponentToTestReadyListener(ComponentToTest);
-}
-
-global.KompotApp = global.setComponentToTest;
-global.React = React;
-global.ReactNative = ReactNative;
-
-fetchGlobals();
-fetchAndEvaluateBundle();

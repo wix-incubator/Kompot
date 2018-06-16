@@ -4,6 +4,8 @@ const app = express();
 
 let currentComponent;
 let globals = {};
+let props = {};
+
 app.get('/setCurrentComponent', (req, res) => {
   currentComponent = req.query.componentName;
   console.log('Setting current component to be', currentComponent);
@@ -19,6 +21,17 @@ app.get('/setGlobals', (req, res) => {
 app.get('/getGlobals', (req, res) => {
   res.send(globals);
   globals = {};
+})
+
+app.get('/setProps', (req, res) => {
+  props = req.query;
+  console.log('Setting props', props);
+  res.send();
+})
+
+app.get('/getProps', (req, res) => {
+  res.send(props);
+  props = {};
 })
 
 app.get('/', (req, res) => {
