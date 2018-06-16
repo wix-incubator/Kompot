@@ -26,7 +26,7 @@ fetchAndEvaluateBundle();
 
 async function fetchAndSetGlobals(){
   try {
-    const response = await fetch('http://localhost:1234/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json"} });
+    const response = await fetch('http://localhost:2600/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json"} });
     const globals = await response.json();
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
@@ -36,7 +36,7 @@ async function fetchAndSetGlobals(){
 
 async function fetchAndSetProps(){
   try {
-    const response = await fetch('http://localhost:1234/getProps', { method: 'GET', headers: { "Content-Type": "application/json"} });
+    const response = await fetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "application/json"} });
     let jsonProps = await response.json();
     Object.keys(jsonProps).map(key => {
       let value = decodeURIComponent(jsonProps[key]);
@@ -53,7 +53,7 @@ async function fetchAndSetProps(){
 
 async function fetchAndEvaluateBundle() {
   try {
-    const response = await fetch('http://localhost:1234', { method: 'GET', headers: { "Content-Type": "text/plain"} });
+    const response = await fetch('http://localhost:2600', { method: 'GET', headers: { "Content-Type": "text/plain"} });
     const content = await response.text();
     eval(content);
   } catch (e) {

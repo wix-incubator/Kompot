@@ -13,12 +13,12 @@ module.exports = {
   testComponent: function(name) {
     const fetch = require('node-fetch');
     const requests = [];
-    requests.push(fetch(`http://localhost:1234/setCurrentComponent?componentName=${name}`));
+    requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${name}`));
 
     return {
       withMocks: function(globals) {
         const query = globals.map(global => `${global}=true`).join('&');
-        requests.push(fetch(`http://localhost:1234/setGlobals?${query}`));
+        requests.push(fetch(`http://localhost:2600/setGlobals?${query}`));
         return this;
       },
       withProps: function(props) {
@@ -31,7 +31,7 @@ module.exports = {
           return `${key}=${encodeURIComponent(value)}`;
         })
         .join('&');
-        requests.push(fetch(`http://localhost:1234/setProps?${query}`));
+        requests.push(fetch(`http://localhost:2600/setProps?${query}`));
         return this;
       },
       mount : async function(){

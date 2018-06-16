@@ -1,14 +1,6 @@
 const express = require('express')
 const fs = require('fs');
 const app = express();
-const ArgumentParser = require('argparse').ArgumentParser;
-
-const parser = new ArgumentParser();
-parser.addArgument(['-p', '--port'], {
-  help: `Specify server port`,
-  type: 'int'
-});
-const args = parser.parseArgs();
 
 let currentComponent;
 let globals = {};
@@ -70,4 +62,4 @@ app.get('/', (req, res) => {
   });
 })
 
-app.listen(args.port, () => console.log(`Kompot server listening on port ${args.port}`))
+app.listen(2600, () => console.log(`Kompot server listening on port 2600`));
