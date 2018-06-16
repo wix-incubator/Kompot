@@ -1,22 +1,15 @@
 module.exports = {
-  require: function (getComponent) {
+  require: function (getComponent, mocks={}) {
     if (global.KompotApp) {
+      Object.keys(mocks).forEach(key => {
+        if(global[key]) {
+          mocks[key]();
+        }
+      });
       const StyleSheet = require('react-native').StyleSheet;
       StyleSheet.create = (obj) => obj;
       global.KompotApp(getComponent())
     }
-    return {
-      mock: function(mocks) {
-        if (global.KompotApp) {
-          Object.keys(mocks).forEach(key => {
-            if(global[key]) {
-              mocks[key]();
-            }
-          });
-        }
-        return this;
-      }
-    };
   },
  
   testComponent: function(name) {
@@ -26,7 +19,7 @@ module.exports = {
 
     return {
       withMocks: function(globals) {
-        const query = globals.join('=true&');
+        const query = globals.map(global => `${global}=true`).join('&');
         requests.push(fetch(`http://localhost:1234/setGlobals?${query}`));
         return this;
       },
