@@ -1,22 +1,31 @@
 const ArgumentParser = require('argparse').ArgumentParser;
-let exec = require('child_process').exec;
+let spawn = require('child_process').spawn;
 
 const parser = new ArgumentParser();
 
 parser.addArgument(['-s', '--start'], {
+  help: `Launch react-native's packager.`,
+  action: 'storeTrue'
+});
+
+parser.addArgument(['-r', '--run-server'], {
   help: `Start the Kompot server on port 2600`,
   action: 'storeTrue'
 });
 
-parser.addArgument(['-b', '--bundle'], {
-  help: `Scan the project for *.kompot.spec.js and generate the bundles.`,
-  action: 'storeTrue'
+parser.addArgument(['-b', '--build'], {
+  help: `Scan the project for *.kompot.spec.js and process them. You should supply this command with your app's name (the same name to you pass to AppRegistry.registerComponent())`
 });
 
 const args = parser.parseArgs();
-if(args.bundle){
-  exec('node ./node_modules/kompot/scripts/generateBundles.js', (err,stdout) => console.log(err,stdout));
+console.log(args);
+if(args.build){
+  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js ${args.bundle}`], { stdio: 'inherit' });
 }
 if(args.start){
-  exec(`node ./node_modules/kompot/server/server.js`, (err,stdout) => console.log(err,stdout));
+  spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });
+}
+
+if(args.run_server){
+  spawn('node', [`./node_modules/kompot/server/server.js`], { stdio: 'inherit' });
 }
