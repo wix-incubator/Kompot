@@ -1,6 +1,6 @@
 *
 !server/*
-!testFramework/*
 !package.json
 !scripts/*
-!webpackUtils/*
+index.js
+kompot.js

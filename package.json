@@ -1,7 +1,7 @@
 {
   "name": "kompot",
   "version": "1.5.0",
-  "main": "testFramework/kompot.js",
+  "main": "kompot.js",
   "bin": {
     "kompot": "./scripts/kompot-cli.js"
   },
@@ -15,22 +15,6 @@
     "argparse": "^1.0.10",
     "babel-loader": "^7.1.4",
     "express": "^4.16.3",
-    "node-fetch": "^2.1.2",
-    "webpack": "^4.12.0",
-    "webpack-command": "^0.2.1"
-  },
-  "devDependencies": {
-    "react": "16.3.1",
-    "react-native": "0.55.4",
-    "babel-jest": "23.0.1",
-    "babel-preset-react": "^6.24.1",
-    "babel-preset-react-native": "4.0.0",
-    "detox": "^7.4.3",
-    "jest": "23.1.0",
-    "mocha": "^5.2.0",
-    "react-test-renderer": "16.3.1"
-  },
-  "jest": {
-    "preset": "react-native"
+    "node-fetch": "^2.1.2"
   }
 }
