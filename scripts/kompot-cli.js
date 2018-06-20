@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const ArgumentParser = require('argparse').ArgumentParser;
 let spawn = require('child_process').spawn;
 
@@ -18,9 +20,8 @@ parser.addArgument(['-b', '--build'], {
 });
 
 const args = parser.parseArgs();
-console.log(args);
 if(args.build){
-  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js ${args.bundle}`], { stdio: 'inherit' });
+  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, args.bundle], { stdio: 'inherit' });
 }
 if(args.start){
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });

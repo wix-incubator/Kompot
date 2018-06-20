@@ -2,5 +2,5 @@
 !server/*
 !package.json
 !scripts/*
-index.js
-kompot.js
+!index.js
+!kompot.js
