@@ -21,7 +21,7 @@ parser.addArgument(['-b', '--build'], {
 
 const args = parser.parseArgs();
 if(args.build){
-  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, args.bundle], { stdio: 'inherit' });
+  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, args.build], { stdio: 'inherit' });
 }
 if(args.start){
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });

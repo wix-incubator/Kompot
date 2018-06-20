@@ -33,7 +33,7 @@ global.React = React;
 global.ReactNative = ReactNative;
 global.KompotContainer = Container;
 
-require('./generatedRequireKompotSpecs');
+const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
 fakeMochaGlobals();
 Promise.all([fetchAndSetGlobals(),fetchAndSetProps()]).then(() => {
   requireComponentSpecFile();
