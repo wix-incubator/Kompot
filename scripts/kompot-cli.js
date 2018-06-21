@@ -16,12 +16,23 @@ parser.addArgument(['-r', '--run-server'], {
 });
 
 parser.addArgument(['-b', '--build'], {
-  help: `Scan the project for *.kompot.spec.js and process them. You should supply this command with your app's name (the same name to you pass to AppRegistry.registerComponent())`
+  help: `Scan the project for *.kompot.spec.js and process them. app name should be the same name that you pass to AppRegistry.registerComponent()`,
+  metavar: 'appName'
+});
+
+parser.addArgument(['-t', '--app-type'], {
+  help: `Application type.`,
+  choices: ['react-native-navigation']
+});
+
+parser.addArgument(['-i', '--init'], {
+  help: `A path to an initialization file to be added to the bundle.`,
+  metavar: 'filePath'
 });
 
 const args = parser.parseArgs();
 if(args.build){
-  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, args.build], { stdio: 'inherit' });
+  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build ,'-t', args.app_type, '-i', args.init], { stdio: 'inherit' });
 }
 if(args.start){
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });

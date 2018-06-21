@@ -1,11 +1,28 @@
 const execSync = require('child_process').execSync;
 const path = require('path');
 const fs = require('fs');
-
+const Templates = require('../rootComponentTemplates');
+const ArgumentParser = require('argparse').ArgumentParser;
 
 const KOMPOT_FILE_EXTENTION = '.kompot.spec.js';
 const OUTPUT_PATH = './node_modules/kompot/generatedRequireKompotSpecs.js';
-const appName = process.argv[2];
+
+const parser = new ArgumentParser();
+
+parser.addArgument(['-n', '--name'], {
+  help: `App name`
+});
+
+parser.addArgument(['-i', '--init'], {
+  help: `Path to initialization file`
+});
+
+parser.addArgument(['-t', '--app-type'], {
+  help: `Application type.`,
+  choices: ['react-native-navigation']
+});
+
+const args = parser.parseArgs();
 
 filePathList = getAllFilesWithKompotExtention();
 
@@ -19,14 +36,21 @@ const requireStatements = filePathList
     return `if(global['${fileName}']){require('${path.resolve(filePath)}');}`;
   }).join('\n');
 
-const output = `
-const AppRegistry = require('react-native').AppRegistry;
-AppRegistry.registerComponent('${appName}', () => global.KompotContainer);
 
-export default function(){
-${requireStatements}
+let registerRootComponent;
+if (args.app_type === 'react-native-navigation') {
+  registerRootComponent = Templates.getNavigationTemplate(args.name);
+} else if (args.init) {
+  registerRootComponent = `require('${args.init}');`;
+} else {
+  registerRootComponent = Templates.getDefaultTemplate(args.name);
 }
-`
+const requireStatementsFunction = `
+export default function(){
+  ${requireStatements}
+}`;
+output = [registerRootComponent, requireStatementsFunction].join('\n');
+
 fs.writeFile(OUTPUT_PATH, output, function (err) {
   if (err) {
     return console.log(err);
