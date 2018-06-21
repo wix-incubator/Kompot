@@ -32,7 +32,7 @@ parser.addArgument(['-i', '--init'], {
 
 const args = parser.parseArgs();
 if(args.build){
-  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build ,'-t', args.app_type, '-i', args.init], { stdio: 'inherit' });
+  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build ,'-t', args.app_type || 'default', '-i', args.init], { stdio: 'inherit' });
 }
 if(args.start){
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });
