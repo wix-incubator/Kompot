@@ -19,6 +19,10 @@ app.get('/setCurrentComponent', (req, res) => {
   res.send();
 })
 
+app.get('/getCurrentComponent', (req, res) => {
+  res.send(currentComponent);
+})
+
 app.get('/setGlobals', (req, res) => {
   globals = req.query;
   console.log('Setting globals', globals);
