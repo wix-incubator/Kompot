@@ -35,10 +35,11 @@ console.log('\n');
 
 const requireStatements = filePathList
   .map(filePath => {
-    const kompotRequire = readFileAndExtractKompotRquirePath(filePath);
+    const dataFromFile = extractDataFromFile(filePath);
     const fileName = path.basename(filePath, KOMPOT_FILE_EXTENTION);
     return `if(global['${fileName}']){
-      currentComponent = require('${kompotRequire.path}')${kompotRequire.member? `.${kompotRequire.member}`: ''};
+      global.kompotCodeInjector(${dataFromFile.injectObject});
+      currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
     }`;
   }).join('\n');
 
@@ -66,31 +67,32 @@ fs.writeFile(OUTPUT_PATH, output, function (err) {
   console.log(`Successfuly created: ${OUTPUT_PATH}`);
 });
 
-function readFileAndExtractKompotRquirePath(filePath) {
+function extractDataFromFile(filePath) {
   const content = fs.readFileSync(filePath, 'utf-8');
   const ast = babylon.parse(content, {sourceType: 'module'});
   let kompotRequireAbsolutePath;
   let kompotRequireMember;
+  let injectObject;
   traverse(ast, {
     CallExpression: ({node}) => {
-      const objectName = _.get(node, 'callee.object.name');
       const methodName = _.get(node, 'callee.property.name');
-      if(objectName === 'Kompot' && methodName === 'require') {
+      if(methodName === 'kompotRequire') {
         const kompotRequireRelativePath = node.arguments[0].extra.rawValue;
         kompotRequireAbsolutePath = path.resolve(path.dirname(filePath),kompotRequireRelativePath);
+      } else if(methodName === 'kompotInjector') {
+        injectObject = content.substring(node.arguments[0].start, node.arguments[0].end);
       }
     },
     MemberExpression: ({node}) => {
-      const objectName = _.get(node, 'object.callee.object.name');
       const methodName = _.get(node, 'object.callee.property.name');
-      if(objectName === 'Kompot' && methodName === 'require') {
+      if(methodName === 'kompotRequire') {
         kompotRequireMember = node.property.name;
       }
     }
   });
   if(kompotRequireAbsolutePath){
     console.log('Found kompot require statement:', kompotRequireAbsolutePath, ' in file: ', filePath);
-    return {path: kompotRequireAbsolutePath, member: kompotRequireMember};
+    return {requirePath: kompotRequireAbsolutePath, requireMember: kompotRequireMember, injectObject};
   } else {
     throw new Error('Cannot find kompot require statement')
   }

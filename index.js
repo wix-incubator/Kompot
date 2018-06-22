@@ -44,8 +44,9 @@ global.KompotApp = global.setComponentToTest;
 global.React = React;
 global.ReactNative = ReactNative;
 global.KompotContainer = Container;
+global.kompotCodeInjector = kompotCodeInjector;
+
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
-fakeMochaGlobals();
 Promise.all([fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
   requireComponentSpecFile();
 })
@@ -87,20 +88,11 @@ async function fetchAndSetProps() {
   }
 }
 
-
-function fakeMochaGlobals() {
-  global.afterEach = () => { };
-  global.after = () => { };
-  global.beforeEach = () => { };
-  global.before = () => { };
-  global.describe = () => { };
-  global.it = () => { };
-  global.xit = () => { };
-  global.setup = () => { };
-  global.suiteSetup = () => { };
-  global.suiteTeardown = () => { };
-  global.suite = () => { };
-  global.teardown = () => { };
-  global.test = () => { };
-  global.run = () => { };
+function kompotCodeInjector(injectorObject){
+  Object.keys(injectorObject).forEach(key => {
+    injectorObject.default && injectorObject.default();
+    if(key !== 'default' && global[key]) {
+      injectorObject[key]();
+    }
+  });
 }

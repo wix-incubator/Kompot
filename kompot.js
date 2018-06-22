@@ -1,7 +1,8 @@
-const path = require('path');
 
 module.exports = {
-  require: function (pathToComponent) {
+  kompotInjector: function(){},
+  kompotRequire: function (pathToComponent) {
+    const path = require('path');
     const fetch = require('node-fetch');
     const fileName = path.basename(pathToComponent, '.js');
     const requests = [];
