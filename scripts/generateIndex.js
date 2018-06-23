@@ -1,6 +1,6 @@
 const _ = require('lodash'); 
 const execSync = require('child_process').execSync;
-const path = require('path');
+const Path = require('path');
 const fs = require('fs');
 const Templates = require('../rootComponentTemplates');
 const ArgumentParser = require('argparse').ArgumentParser;
@@ -41,7 +41,7 @@ console.log('\n');
 const requireStatements = filePathList
   .map(filePath => {
     const dataFromFile = extractDataFromFile(filePath);
-    const fileName = path.basename(filePath, KOMPOT_FILE_EXTENTION);
+    const fileName = Path.basename(filePath, KOMPOT_FILE_EXTENTION);
     return `if(global['${fileName}']){
       global.kompotCodeInjector(${dataFromFile.injectObject || '{}'});
       currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
@@ -53,14 +53,14 @@ let registerRootComponent;
 if (args.app_type === 'react-native-navigation') {
   registerRootComponent = Templates.getNavigationTemplate(args.name);
 } else if (args.init) {
-  registerRootComponent = `require('${path.resolve(args.init)}');`;
+  registerRootComponent = `require('${Path.resolve(args.init)}');`;
 } else {
   registerRootComponent = Templates.getDefaultTemplate(args.name);
 }
 
 let loadMocksFile = '';
 if(args.load){
-  loadMocksFile = `require('${path.resolve(args.load)}');`
+  loadMocksFile = `require('${Path.resolve(args.load)}');`
 }
 const requireStatementsFunction = `
 export default function(){
@@ -83,14 +83,19 @@ function extractDataFromFile(filePath) {
   let kompotRequireAbsolutePath;
   let kompotRequireMember;
   let injectObject;
+  const requiresStrings = [];
   traverse(ast, {
     CallExpression: ({node}) => {
       const methodName = _.get(node, 'callee.property.name');
+      const calleeName = _.get(node, 'callee.name');
       if(methodName === 'kompotRequire') {
         const kompotRequireRelativePath = node.arguments[0].extra.rawValue;
-        kompotRequireAbsolutePath = path.resolve(path.dirname(filePath),kompotRequireRelativePath);
+        kompotRequireAbsolutePath = Path.resolve(Path.dirname(filePath),kompotRequireRelativePath);
       } else if(methodName === 'kompotInjector') {
         injectObject = content.substring(node.arguments[0].start, node.arguments[0].end);
+      } 
+      if(calleeName === 'require') {
+        requiresStrings.push(content.substring(node.arguments[0].start +1, node.arguments[0].end -1))
       }
     },
     MemberExpression: ({node}) => {
@@ -100,12 +105,24 @@ function extractDataFromFile(filePath) {
       }
     }
   });
+  if(injectObject) {
+    injectObject = resolveAllPaths(injectObject,requiresStrings,Path.dirname(filePath))
+  }
   if(kompotRequireAbsolutePath){
     console.log('Found kompot require statement:', kompotRequireAbsolutePath, ' in file: ', filePath);
     return {requirePath: kompotRequireAbsolutePath, requireMember: kompotRequireMember, injectObject};
   } else {
     throw new Error('Cannot find kompot require statement')
   }
+}
+
+function resolveAllPaths(injectorObj, paths, basePath){
+  let resolvedInjector = injectorObj;
+  paths.forEach((path) => {
+    const resolvedPath = Path.resolve(basePath,path);
+    resolvedInjector = resolvedInjector.split(`require('${path}')`).join(`require('${resolvedPath}')`);
+  })
+  return resolvedInjector;
 }
 
 function getAllFilesWithKompotExtention() {
