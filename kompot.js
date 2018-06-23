@@ -1,6 +1,5 @@
 
 module.exports = {
-  kompotInjector: function(){},
   kompotRequire: function (pathToComponent) {
     const path = require('path');
     const fetch = require('node-fetch');
@@ -25,6 +24,9 @@ module.exports = {
           })
           .join('&');
           requests.push(fetch(`http://localhost:2600/setProps?${query}`));
+          return this;
+        },
+        kompotInjector: function(){
           return this;
         },
         mount : async function(){
