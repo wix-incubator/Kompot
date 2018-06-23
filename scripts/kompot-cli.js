@@ -25,14 +25,38 @@ parser.addArgument(['-t', '--app-type'], {
   choices: ['react-native-navigation']
 });
 
-parser.addArgument(['-i', '--init'], {
-  help: `A path to an initialization file to be added to the bundle.`,
+parser.addArgument(['-i', '--init-root'], {
+  help: `A path to an initialization file, for custom initializaion of the root component.`,
   metavar: 'filePath'
 });
 
+parser.addArgument(['-l', '--load'], {
+  help: `A path to a file that will be loaded before the mounting of the component. Put all global mocks in this file`,
+  metavar: 'filePath'
+});
+
+
 const args = parser.parseArgs();
+if(args.app_type && args.init_root){
+  throw new Error(`Cannot use '--init-root' option along with '--app-type'.`)
+}
 if(args.build){
-  spawn('node', [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build ,'-t', args.app_type || 'default', '-i', args.init], { stdio: 'inherit' });
+  const command = [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build];
+  if(args.app_type){
+    command.push('-t');
+    command.push(args.app_type);
+  }
+  if(args.init_root){
+    command.push('-i');
+    command.push(args.init_root);
+  }
+
+  if(args.load){
+    command.push('-l');
+    command.push(args.load);
+  }
+
+  spawn('node', command, { stdio: 'inherit' });
 }
 if(args.start){
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });

@@ -36,7 +36,6 @@ module.exports = {
 
     const handler = {
       get: (target,prop) => {
-        console.log('getting prop', prop)
         if(testComponentBuilder.hasOwnProperty(prop)){
           return testComponentBuilder[prop];
         } else{

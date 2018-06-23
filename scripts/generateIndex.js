@@ -25,6 +25,11 @@ parser.addArgument(['-t', '--app-type'], {
   choices: ['react-native-navigation']
 });
 
+parser.addArgument(['-l', '--load'], {
+  help: `A path to a file that will be loaded before the mounting of the component. Put all global mocks in this file`,
+  metavar: 'filePath'
+});
+
 const args = parser.parseArgs();
 
 filePathList = getAllFilesWithKompotExtention();
@@ -48,9 +53,14 @@ let registerRootComponent;
 if (args.app_type === 'react-native-navigation') {
   registerRootComponent = Templates.getNavigationTemplate(args.name);
 } else if (args.init) {
-  registerRootComponent = `require('${args.init}');`;
+  registerRootComponent = `require('${path.resolve(args.init)}');`;
 } else {
   registerRootComponent = Templates.getDefaultTemplate(args.name);
+}
+
+let loadMocksFile = '';
+if(args.load){
+  loadMocksFile = `require('${path.resolve(args.load)}');`
 }
 const requireStatementsFunction = `
 export default function(){
@@ -58,7 +68,7 @@ export default function(){
   ${requireStatements}
   global.KompotApp(currentComponent);
 }`;
-output = [registerRootComponent, requireStatementsFunction].join('\n');
+output = [loadMocksFile, registerRootComponent, requireStatementsFunction].join('\n');
 
 fs.writeFile(OUTPUT_PATH, output, function (err) {
   if (err) {
