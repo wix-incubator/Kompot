@@ -1,5 +1,6 @@
 import ReactNative, { AppRegistry, ActivityIndicator, View } from 'react-native';
 import React from 'react';
+import {deSerialize } from './Serialize';
 
 class Container extends React.Component {
   constructor() {
@@ -73,16 +74,9 @@ async function fetchCurrentComponent() {
 
 async function fetchAndSetProps() {
   try {
-    const response = await fetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "application/json" } });
-    let jsonProps = await response.json();
-    Object.keys(jsonProps).map(key => {
-      let value = decodeURIComponent(jsonProps[key]);
-      if (typeof value === 'string' && value.startsWith('FUNCTION#')) {
-        value = value.replace('FUNCTION#', '');
-        value = eval(value);
-      }
-      props[key] = value;
-    });
+    const response = await fetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "text/plain" } });
+    const stringProps = await response.text();
+    props = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
     console.error('Cannot fetch props: ', e.message);
   }

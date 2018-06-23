@@ -1,11 +1,10 @@
-
 module.exports = {
   kompotRequire: function (pathToComponent) {
     const path = require('path');
     const fetch = require('node-fetch');
     const fileName = path.basename(pathToComponent, '.js');
+    const {serialize} = require('./Serialize');
     const requests = [];
-    requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`));
 
     const testComponentBuilder =  {
         withMocks: function(globals) {
@@ -14,15 +13,7 @@ module.exports = {
           return this;
         },
         withProps: function(props) {
-          const query = Object.keys(props)
-          .map(key => {
-            let value = props[key];
-            if(isFunction(props[key])){
-              value = 'FUNCTION#'+ value.toString();
-            }
-            return `${key}=${encodeURIComponent(value)}`;
-          })
-          .join('&');
+          const query = `props=${encodeURIComponent(serialize(props))}`
           requests.push(fetch(`http://localhost:2600/setProps?${query}`));
           return this;
         },
@@ -30,6 +21,7 @@ module.exports = {
           return this;
         },
         mount : async function(){
+          requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`));
           return Promise.all(requests);
         }
       };
