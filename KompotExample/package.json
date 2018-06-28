@@ -1,0 +1,36 @@
+{
+  "name": "kompot-example",
+  "version": "0.0.1",
+  "private": true,
+  "scripts": {
+    "start": "node node_modules/react-native/local-cli/cli.js start",
+    "start-e2e": "npm run kompot-build && kompot -sr",
+    "kompot-build": "kompot -b KompotExample",
+    "test": "detox build -c ios.sim.debug && detox test -c ios.sim.debug -s KompotTests",
+    "test-skip-build": "npm run kompot-build && detox test -c ios.sim.debug -s KompotTests"
+  },
+  "dependencies": {
+    "react": "16.3.1",
+    "react-native": "0.55.4"
+  },
+  "devDependencies": {
+    "babel-jest": "23.2.0",
+    "babel-polyfill": "^6.26.0",
+    "babel-preset-react-native": "4.0.0",
+    "detox": "^8.0.0",
+    "kompot": "^1.16.0",
+    "mocha": "^5.2.0",
+    "react-test-renderer": "16.3.1"
+  },
+  "detox": {
+    "configurations": {
+      "ios.sim.debug": {
+        "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/KompotExample.app",
+        "build": "xcodebuild -project /Users/niryo/git/Kompot/KompotExample/ios/KompotExample.xcodeproj -scheme KompotExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build/",
+        "type": "ios.simulator",
+        "name": "iPhone 7"
+      }
+    },
+    "test-runner": "mocha"
+  }
+}
