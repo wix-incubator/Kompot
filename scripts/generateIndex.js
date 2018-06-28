@@ -41,7 +41,7 @@ console.log('\n');
 const requireStatements = filePathList
   .map(filePath => {
     const dataFromFile = extractDataFromFile(filePath);
-    const fileName = Path.basename(filePath, KOMPOT_FILE_EXTENTION);
+    const fileName = Path.basename(dataFromFile.requirePath);
     return `if(global['${fileName}']){
       global.kompotCodeInjector(${dataFromFile.injectObject || '{}'});
       currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
