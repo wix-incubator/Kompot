@@ -1,11 +1,6 @@
 
 import React from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import {Text,View, TouchableOpacity} from 'react-native';
 import {fetchJoke} from './fetchJokeService';
 
 export class ChuckNorrisJokesPresenter extends React.Component {
@@ -18,10 +13,24 @@ export class ChuckNorrisJokesPresenter extends React.Component {
   componentWillMount(){
     fetchJoke().then(joke => this.setState({joke}))
   }
+
+  getJokeText(){
+    let text = '{ ... }';
+    if(this.state.joke){
+      text = this.state.joke;
+      if(this.props.replaceWith){
+        text = this.state.joke.replace(/Chuck Norris/g, this.props.replaceWith);
+      } 
+      text = `"${text}"`
+    }
+    return text;
+  }
   render() {
     return (
       <View style={[ {display: 'flex', justifyContent:'center', alignItems: 'center', padding: 10}]}>
-        <Text testID="chuckNorisJoke">{this.state.joke ? `"${this.state.joke}"` : '{ ... }'}</Text>
+      <TouchableOpacity testID="clickable" onPress={() => this.props.onPress && this.props.onPress()}>
+        <Text testID="chuckNorisJoke">{this.getJokeText()}</Text>
+      </TouchableOpacity>
       </View>
     );
   }

@@ -4,10 +4,13 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "start-e2e": "npm run kompot-build && kompot -sr",
-    "kompot-build": "kompot -b KompotExample",
-    "test": "detox build -c ios.sim.debug && detox test -c ios.sim.debug -s KompotTests",
-    "test-skip-build": "npm run kompot-build && detox test -c ios.sim.debug -s KompotTests"
+    "start-kompot": "npm run kompot-build && kompot -sr",
+    "detox-build": "detox build -c ios.sim.debug",
+    "kill": "lsof -i:8081 | awk 'NR!=1 {print $2}' | xargs kill && lsof -i:2600 | awk 'NR!=1 {print $2}' | xargs kill",
+    "basic-tests": "kompot -b KompotExample -l kompotGlobalMocks.js  && detox test -c ios.sim.debug -s KompotTests",
+    "custom-root-test": "kompot -b KompotExample -i kompotCustomRoot  && detox test -c ios.sim.debug -s CustomRootTest",
+    "test": "npm run detox-build && npm run test-all",
+    "test-all": "npm run kill && kompot -sr & npm run basic-tests && npm run custom-root-test && npm run kill"
   },
   "dependencies": {
     "react": "16.3.1",

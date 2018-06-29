@@ -1,18 +1,16 @@
 
 import React from 'react';
-import {
-  Platform,
-  StyleSheet,
-  Text,
-  View
-} from 'react-native';
+import {StyleSheet,Text,View} from 'react-native';
 import {ChuckNorrisJokesPresenter} from './ChuckNorrisJokesPresenter';
+import {Header} from './Header';
+
 export class App extends React.Component {
   render() {
     return (
       <View style={[StyleSheet.absoluteFillObject,  {display: 'flex', justifyContent:'center', alignItems: 'center'}]}>
+      <Header name="Nir"/>
       <Text style={{fontSize: 20}}>Chuck Norris Joke of the day:</Text>
-        <ChuckNorrisJokesPresenter/>
+        <ChuckNorrisJokesPresenter replaceWith="Nir"/>
       </View>
     );
   }

@@ -1,4 +1,4 @@
-import ReactNative, { AppRegistry, ActivityIndicator, View } from 'react-native';
+import ReactNative, { ActivityIndicator, View } from 'react-native';
 import React from 'react';
 import {deSerialize } from './Serialize';
 
