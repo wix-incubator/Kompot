@@ -4,24 +4,32 @@ module.exports = {
     const fetch = require('node-fetch');
     const fileName = path.basename(pathToComponent, '.js');
     const {serialize} = require('./Serialize');
-    const requests = [];
+    let globals = [];
+    const props = {};
+
+    //helpers:
+    const getGlobalsQuery = (globals) => globals.map(global => `${global}=true`).join('&');
+    const getPropsQuery = (props) => `props=${encodeURIComponent(serialize(props))}`;
 
     const testComponentBuilder =  {
-        withMocks: function(globals) {
-          const query = globals.map(global => `${global}=true`).join('&');
-          requests.push(fetch(`http://localhost:2600/setGlobals?${query}`));
+        withMocks: function(globalsToAdd) {
+          globals = globals.concat(globalsToAdd);
           return this;
         },
-        withProps: function(props) {
-          const query = `props=${encodeURIComponent(serialize(props))}`
-          requests.push(fetch(`http://localhost:2600/setProps?${query}`));
+        withProps: function(propsToAdd) {
+          Object.assign(props, propsToAdd);
           return this;
         },
         kompotInjector: function(){
           return this;
         },
         mount : async function(){
+          const requests = [];
+          const globalsQuery = getGlobalsQuery(globals);
+          const propsQuery = getPropsQuery(props);
           requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`));
+          requests.push(fetch(`http://localhost:2600/setGlobals?${globalsQuery}`));
+          requests.push(fetch(`http://localhost:2600/setProps?${propsQuery}`));
           await Promise.all(requests);
           await device.reloadReactNative();
         }
@@ -39,7 +47,3 @@ module.exports = {
     return new Proxy(testComponentBuilder, handler);
   }
 };
-
-function isFunction(functionToCheck) {
-  return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
- }

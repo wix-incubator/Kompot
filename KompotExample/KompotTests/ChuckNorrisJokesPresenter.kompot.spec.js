@@ -40,11 +40,22 @@ describe('ChuckNorrisJokesPresenter', () => {
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
   })
 
-  it('Passing function propt', async () => {
+  it('Passing a function as a prop', async () => {
     await component
       .withProps({onPress: () => alert('onPress clicked!')})
       .mount();
     await element(by.id('clickable')).tap();
     await expect(element(by.text('onPress clicked!'))).toBeVisible();
+  })
+
+  it('Chaining order does not matter', async () => {
+    await component
+      .withProps({onPress: () => alert('onPress clicked!')})
+      .withMocks(['MOCK_LAME_JOKE'])
+      .withProps({replaceWith: 'Kompot'})
+      .mount();
+    await element(by.id('clickable')).tap();
+    await expect(element(by.text('onPress clicked!'))).toBeVisible();
+    await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
   })
 });

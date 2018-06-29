@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "start-kompot": "npm run kompot-build && kompot -sr",
+    "start-kompot": "kompot -sr",
     "detox-build": "detox build -c ios.sim.debug",
     "kill": "lsof -i:8081 | awk 'NR!=1 {print $2}' | xargs kill && lsof -i:2600 | awk 'NR!=1 {print $2}' | xargs kill",
     "basic-tests": "kompot -b KompotExample -l kompotGlobalMocks.js  && detox test -c ios.sim.debug -s KompotTests",
