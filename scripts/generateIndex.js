@@ -119,8 +119,10 @@ function extractDataFromFile(filePath) {
 function resolveAllPaths(injectorObj, paths, basePath){
   let resolvedInjector = injectorObj;
   paths.forEach((path) => {
-    const resolvedPath = Path.resolve(basePath,path);
-    resolvedInjector = resolvedInjector.split(`require('${path}')`).join(`require('${resolvedPath}')`);
+    if(Path.basename(path) !== path){
+      const resolvedPath = Path.resolve(basePath,path);
+      resolvedInjector = resolvedInjector.split(`require('${path}')`).join(`require('${resolvedPath}')`);
+    }
   })
   return resolvedInjector;
 }
