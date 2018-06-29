@@ -22,7 +22,8 @@ module.exports = {
         },
         mount : async function(){
           requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`));
-          return Promise.all(requests);
+          await Promise.all(requests);
+          await device.reloadReactNative();
         }
       };
 

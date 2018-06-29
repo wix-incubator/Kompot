@@ -19,19 +19,16 @@ component.kompotInjector({
 describe('ChuckNorrisJokesPresenter', () => {
   it('Sanity check', async () => {
     await component.mount();
-    await device.reloadReactNative();
     await expect(element(by.id('chuckNorisJoke'))).toBeVisible();
   });
 
   it('Mocking a required module', async () => {
     await component.mount();
-    await device.reloadReactNative();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"A mocked joke fetched from the joke service!"');
   })
 
   it('Using a specific mock for test', async () => {
     await component.withMocks(['MOCK_LAME_JOKE']).mount();
-    await device.reloadReactNative();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Chuck Norris joke"');
   })
 
@@ -40,7 +37,6 @@ describe('ChuckNorrisJokesPresenter', () => {
       .withProps({replaceWith: 'Kompot'})
       .withMocks(['MOCK_LAME_JOKE'])
       .mount();
-    await device.reloadReactNative();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
   })
 
@@ -48,7 +44,6 @@ describe('ChuckNorrisJokesPresenter', () => {
     await component
       .withProps({onPress: () => alert('onPress clicked!')})
       .mount();
-    await device.reloadReactNative();
     await element(by.id('clickable')).tap();
     await expect(element(by.text('onPress clicked!'))).toBeVisible();
   })
