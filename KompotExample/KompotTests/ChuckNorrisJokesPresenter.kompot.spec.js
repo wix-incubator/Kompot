@@ -5,7 +5,7 @@ component.kompotInjector({
   default: () => {
     const JokeService = require('../fetchJokeService');
     JokeService.fetchJoke = async () => {
-      return Promise.resolve('A mocked joke fetched from the joke service!')
+      return Promise.resolve('A mocked joke fetched from the joke service!');
     }
   },
   MOCK_LAME_JOKE: () => {
