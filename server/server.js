@@ -3,17 +3,16 @@ const fs = require('fs');
 const app = express();
 
 let currentComponent;
-let globals = {};
-let props = '{}';
-let serverMode='FORGET';
+let globals;
+let props;
 
-app.get('/setServerMode', (req, res) => {
-  serverMode = req.query.mode;
-  console.log('Setting server mode to be', serverMode);
-  res.send();
-})
+function reset() {
+  globals = {};
+  props = '{}';
+}
 
 app.get('/setCurrentComponent', (req, res) => {
+  reset();
   currentComponent = req.query.componentName;
   console.log('Setting current component to be', currentComponent);
   res.send();
@@ -30,10 +29,8 @@ app.get('/setGlobals', (req, res) => {
 })
 
 app.get('/getGlobals', (req, res) => {
+  console.log('get globals:', golbals);
   res.send(globals);
-  if(serverMode === 'FORGET'){
-    globals = {};
-  }
 })
 
 app.get('/setProps', (req, res) => {
@@ -43,27 +40,12 @@ app.get('/setProps', (req, res) => {
 })
 
 app.get('/getProps', (req, res) => {
+  console.log('get props:', props);
   res.send(props);
-  if(serverMode === 'FORGET'){
-    props = '{}';
-  }
 })
 
 app.get('/', (req, res) => {
-  if(!currentComponent){
-    res.send();
-  }
-  const path =  `${ __dirname}/../.generatedBundles/`;
-  const fileName = `${currentComponent}.bundle.js`;
-  options ={
-    root: path
-  }
-  console.log('Sending: ', path+fileName);
-  res.sendFile(fileName,options, (err) => {
-    if(err) {
-      console.log('ERROR:', err);
-    }
-  });
+    res.send('Kompot server is running');
 })
 
 app.listen(2600, () => console.log(`Kompot server listening on port 2600`));
