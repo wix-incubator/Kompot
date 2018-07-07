@@ -5,7 +5,7 @@ module.exports = {
     const fileName = path.basename(pathToComponent, '.js');
     const {serialize} = require('./Serialize');
     let globals = [];
-    const props = {};
+    let props = {};
 
     //helpers:
     const getGlobalsQuery = (globals) => globals.map(global => `${global}=true`).join('&');
@@ -27,11 +27,13 @@ module.exports = {
           const requests = [];
           const globalsQuery = getGlobalsQuery(globals);
           const propsQuery = getPropsQuery(props);
-          requests.push(fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`));
+          await fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`);
           requests.push(fetch(`http://localhost:2600/setGlobals?${globalsQuery}`));
           requests.push(fetch(`http://localhost:2600/setProps?${propsQuery}`));
           await Promise.all(requests);
           await device.reloadReactNative();
+          globals = [];
+          props = {};
         }
       };
 

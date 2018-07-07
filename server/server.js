@@ -29,7 +29,7 @@ app.get('/setGlobals', (req, res) => {
 })
 
 app.get('/getGlobals', (req, res) => {
-  console.log('get globals:', golbals);
+  console.log('Setting globals', globals);
   res.send(globals);
 })
 
