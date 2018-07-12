@@ -1,9 +1,0 @@
-*
-!server/*
-!package.json
-!scripts/*
-!index.js
-!kompot.js
-!rootComponentTemplates.js
-!index.ios.js
-!Serialize.js
