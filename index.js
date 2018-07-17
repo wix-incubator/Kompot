@@ -29,17 +29,17 @@ class Container extends React.Component {
   render() {
     const TestedComponent = this.state.TestedComponent;
     const props = this.state.props;
-    return this.state.TestedComponent ? <TestedComponent {...props} /> :this.renderLoader();
+    return this.state.TestedComponent ? <TestedComponent componentId="kompotComponent" {...props} /> :this.renderLoader();
   }
 }
 
 let onComponentToTestReadyListener;
-let props = {};
+global.componentProps = {};
 global.onComponentToTestReady = function (listener) {
   onComponentToTestReadyListener = listener;
 }
 global.setComponentToTest = function (ComponentToTest) {
-  onComponentToTestReadyListener(ComponentToTest, props);
+  onComponentToTestReadyListener(ComponentToTest, global.componentProps);
 }
 global.KompotApp = global.setComponentToTest;
 global.React = React;
@@ -76,15 +76,15 @@ async function fetchAndSetProps() {
   try {
     const response = await fetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "text/plain" } });
     const stringProps = await response.text();
-    props = deSerialize(decodeURIComponent(stringProps));
+    global.componentProps = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
     console.log('Cannot fetch props: ', e.message);
   }
 }
 
 function kompotCodeInjector(injectorObject){
+  injectorObject.default && injectorObject.default();
   Object.keys(injectorObject).forEach(key => {
-    injectorObject.default && injectorObject.default();
     if(key !== 'default' && global[key]) {
       injectorObject[key]();
     }
