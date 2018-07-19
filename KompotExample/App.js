@@ -11,6 +11,7 @@ export class App extends React.Component {
       <Header name="Nir"/>
       <Text style={{fontSize: 20}}>Chuck Norris Joke of the day:</Text>
         <ChuckNorrisJokesPresenter replaceWith="Nir"/>
+        {this.props.jokeClass ? <Text testID="jokeClass">{this.props.jokeClass.getJoke()}</Text> : null}
       </View>
     );
   }

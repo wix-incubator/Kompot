@@ -2,11 +2,17 @@
 
 const ArgumentParser = require('argparse').ArgumentParser;
 let spawn = require('child_process').spawn;
+let execSync = require('child_process').execSync;
 
 const parser = new ArgumentParser();
 
 parser.addArgument(['-s', '--start'], {
   help: `Launch react-native's packager.`,
+  action: 'storeTrue'
+});
+
+parser.addArgument(['-k', '--kill'], {
+  help: `Kill server and packager if needed.`,
   action: 'storeTrue'
 });
 
@@ -37,31 +43,43 @@ parser.addArgument(['-l', '--load'], {
 
 
 const args = parser.parseArgs();
-if(args.app_type && args.init_root){
+if (args.app_type && args.init_root) {
   throw new Error(`Cannot use '--init-root' option along with '--app-type'.`)
 }
-if(args.build){
-  const command = [`./node_modules/kompot/scripts/generateIndex.js`, '-n',args.build];
-  if(args.app_type){
+if (args.build) {
+  const command = [`./node_modules/kompot/scripts/generateIndex.js`, '-n', args.build];
+  if (args.app_type) {
     command.push('-t');
     command.push(args.app_type);
   }
-  if(args.init_root){
+  if (args.init_root) {
     command.push('-i');
     command.push(args.init_root);
   }
 
-  if(args.load){
+  if (args.load) {
     command.push('-l');
     command.push(args.load);
   }
 
   spawn('node', command, { stdio: 'inherit' });
 }
-if(args.start){
+
+if (args.kill) {
+  execSync(`lsof -i:8081 | awk 'NR!=1 {print $2}' | xargs kill && lsof -i:2600 | awk 'NR!=1 {print $2}' | xargs kill`, (e, stdout, stderr) => {
+    if (e instanceof Error) {
+      console.error(e);
+      throw e;
+    }
+    console.log('stdout ', stdout);
+    console.log('stderr ', stderr);
+  });
+}
+
+if (args.start) {
   spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });
 }
 
-if(args.run_server){
+if (args.run_server) {
   spawn('node', [`./node_modules/kompot/server/server.js`], { stdio: 'inherit' });
 }

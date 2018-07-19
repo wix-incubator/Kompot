@@ -76,13 +76,15 @@ When you require a component, you get a component object with the following prop
 ## Kompot cli:
 
 ```
-usage: kompot [-h] [-s] [-r] [-b appName] [-t {react-native-navigation}]
-              [-i filePath] [-l filePath]
+usage: kompot-cli.js [-h] [-s] [-k] [-r] [-b appName]
+                     [-t {react-native-navigation}] [-i filePath]
+                     [-l filePath]
 
 
 Optional arguments:
   -h, --help            Show this help message and exit.
   -s, --start           Launch react-native's packager.
+  -k, --kill            Kill server and packager if needed.
   -r, --run-server      Start the Kompot server on port 2600
   -b appName, --build appName
                         Scan the project for *.kompot.spec.js and process
@@ -96,4 +98,5 @@ Optional arguments:
   -l filePath, --load filePath
                         A path to a file that will be loaded before the
                         mounting of the component. Put all global mocks in
+                        this file
 ```

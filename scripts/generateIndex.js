@@ -45,6 +45,9 @@ const requireStatements = filePathList
     return `if(global['${fileName}']){
       global.kompotCodeInjector(${dataFromFile.injectObject || '{}'});
       currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
+      if(!currentComponent) {
+        throw new Error('Component is undefined: Please check your kompotRequire statement in ${filePath}');
+      }
     }`;
   }).join('\n');
 
