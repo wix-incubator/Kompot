@@ -7,7 +7,7 @@ A utility library for testing React Native components using Detox
 ## Example:
 ```
 const Kompot = require('kompot');
-//require the component:
+//require the component that we want to test:
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
 
 //write some mocks:
