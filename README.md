@@ -1,10 +1,39 @@
 # Kompot
 A utility library for testing React Native components using Detox
 
+## Installation 
+
+`npm install --save-dev kompot`
+## Example:
+```
+const Kompot = require('kompot');
+//require the component:
+const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
+
+//write some mocks:
+component.kompotInjector({
+  MOCK_LAME_JOKE: () => {
+    const JokeService = require('../fetchJokeService');
+    JokeService.fetchJoke = async () => {
+      return Promise.resolve('This is a lame Chuck Norris joke')
+    }
+  }
+})
+
+describe('ChuckNorrisJokesPresenter', () => {
+  it('Should fetch a joke', async () => 
+    await component
+      .withProps({someProp: 'test'})
+      .withMocks(['MOCK_LAME_JOKE']) //use the mock that we specified above
+      .mount();
+    await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
+  })
+});
+```
 ## API:
 
 ### **KompotRequire(pathToComponent)**:
-You should use this method instead of the native require in order to require you component.
+You should use this method instead of the native require in order to require your component.
 ```javascript
 const component = Kompot.kompotRequire('../App').App;
 ```
@@ -35,7 +64,7 @@ You can decide which mock will be activated when you are mounting the component 
 component.withMocks(['MOCK_LAME_JOKE']).mount();
 ```
 
-The `default` funciton will be always activated.
+The `default` mock will be always activated.
 
 ### **The Component Object**:
 When you require a component, you get a component object with the following props:
