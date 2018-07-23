@@ -5,7 +5,7 @@ A utility library for testing React Native components using Detox
 
 `npm install --save-dev kompot`
 ## Example:
-```
+```javascript
 const Kompot = require('kompot');
 //require the component that we want to test:
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
