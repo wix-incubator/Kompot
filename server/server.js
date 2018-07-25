@@ -8,6 +8,7 @@ let props;
 
 function reset() {
   globals = {};
+  triggers = {}
   props = '{}';
 }
 
@@ -29,9 +30,20 @@ app.get('/setGlobals', (req, res) => {
 })
 
 app.get('/getGlobals', (req, res) => {
-  console.log('Setting globals', globals);
+  console.log('Getting globals', globals);
   res.send(globals);
 })
+app.get('/setTriggers', (req, res) => {
+  triggers = req.query;
+  console.log('Setting triggers', triggers);
+  res.send();
+})
+
+app.get('/getTriggers', (req, res) => {
+  console.log('Getting triggers', triggers);
+  res.send(triggers);
+})
+
 
 app.get('/setProps', (req, res) => {
   props = req.query.props;

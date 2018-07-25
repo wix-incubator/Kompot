@@ -1,4 +1,4 @@
-import ReactNative, { ActivityIndicator, View } from 'react-native';
+import ReactNative, { ActivityIndicator, View, Dimensions, Button} from 'react-native';
 import React from 'react';
 import {deSerialize } from './Serialize';
 
@@ -7,11 +7,12 @@ class Container extends React.Component {
     super();
     this.state = {
       TestedComponent: undefined,
-      props: undefined
+      props: undefined,
+      triggers: []
     }
   }
   componentDidMount() {
-    global.onComponentToTestReady((TestedComponent, props) => this.setState({ TestedComponent, props }));
+    global.onComponentToTestReady((TestedComponent, props, triggers) => this.setState({ TestedComponent, props, triggers}));
   }
   renderLoader() {
     return (
@@ -25,11 +26,24 @@ class Container extends React.Component {
         <ActivityIndicator size="large" color="black" />
       </View>);
   }
-
-  render() {
+  onTriggerPressed(trigger){
+    global.triggers[trigger] && global.triggers[trigger]();
+  }
+  renderComponent(){
     const TestedComponent = this.state.TestedComponent;
     const props = this.state.props;
-    return this.state.TestedComponent ? <TestedComponent componentId="kompotComponent" {...props} /> :this.renderLoader();
+
+    return (
+    <View style={{height: Dimensions.get('window').height}}>
+      <View style={{display: 'flex', flexDirection: 'row'}}>
+      {this.state.triggers.map(trigger => <Button testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
+      </View>
+      <TestedComponent componentId="kompotComponent" {...props} />
+    </View>);
+  }
+
+  render() {
+    return this.state.TestedComponent ? this.renderComponent() :this.renderLoader();
   }
 }
 
@@ -39,16 +53,17 @@ global.onComponentToTestReady = function (listener) {
   onComponentToTestReadyListener = listener;
 }
 global.setComponentToTest = function (ComponentToTest) {
-  onComponentToTestReadyListener(ComponentToTest, global.componentProps);
+  onComponentToTestReadyListener(ComponentToTest, global.componentProps, Object.keys(global.triggers));
 }
 global.KompotApp = global.setComponentToTest;
 global.React = React;
 global.ReactNative = ReactNative;
 global.KompotContainer = Container;
 global.kompotCodeInjector = kompotCodeInjector;
+global.triggers = {};
 
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
-Promise.all([fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
+Promise.all([fetchAndSetTriggers(), fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
   requireComponentSpecFile();
 })
 
@@ -59,6 +74,16 @@ async function fetchAndSetGlobals() {
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
     console.log('Cannot fetch globals: ', e.message);
+  }
+}
+
+async function fetchAndSetTriggers() {
+  try {
+    const response = await fetch('http://localhost:2600/getTriggers', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const triggersObj = await response.json();
+    Object.keys(triggersObj).forEach(key => global.triggers[key] = true);
+  } catch (e) {
+    console.log('Cannot fetch triggers: ', e.message);
   }
 }
 
@@ -87,6 +112,9 @@ function kompotCodeInjector(injectorObject){
   Object.keys(injectorObject).forEach(key => {
     if(key !== 'default' && global[key]) {
       injectorObject[key]();
+    }
+    if(global.triggers[key]){
+      global.triggers[key] = injectorObject[key];
     }
   });
 }
