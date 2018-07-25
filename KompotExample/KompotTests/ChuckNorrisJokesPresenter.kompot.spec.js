@@ -3,6 +3,7 @@ const Kompot = require('kompot');
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter').ChuckNorrisJokesPresenter;
 component.kompotInjector({
   default: () => {
+    global.fakeNavigationLib = (componentRef) => global.componentRef = componentRef;
     const JokeService = require('../fetchJokeService');
     JokeService.fetchJoke = async () => {
       return Promise.resolve('A mocked joke fetched from the joke service!');
@@ -13,6 +14,9 @@ component.kompotInjector({
     JokeService.fetchJoke = async () => {
       return Promise.resolve('This is a lame Chuck Norris joke')
     }
+  },
+  triggerNavigationEvent:() => {
+    global.componentRef.onNavigationEvent('some event!');
   }
 })
 
@@ -25,6 +29,12 @@ describe('ChuckNorrisJokesPresenter', () => {
   it('Mocking a required module', async () => {
     await component.mount();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"A mocked joke fetched from the joke service!"');
+  })
+
+  it('Using triggers', async () => {
+    await component.withTriggers(['triggerNavigationEvent']).mount();
+    await element(by.id('triggerNavigationEvent')).tap();
+    await expect(element(by.text('some event!'))).toBeVisible();
   })
 
   it('Using a specific mock for test', async () => {

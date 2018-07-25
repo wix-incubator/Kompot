@@ -12,6 +12,13 @@ export class ChuckNorrisJokesPresenter extends React.Component {
   }
   componentWillMount(){
     fetchJoke().then(joke => this.setState({joke}))
+    global.fakeNavigationLib && global.fakeNavigationLib(this);
+  }
+
+  onNavigationEvent(event){
+    //sometime we have methods on our component that are being triggered from outside of the component.
+    //we can simulate the triggers of those method in the tests by using "withTriggers" when mounting the componnent.
+    alert(event);
   }
 
   getJokeText(){
