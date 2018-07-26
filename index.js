@@ -38,7 +38,7 @@ class Container extends React.Component {
       <View style={{display: 'flex', flexDirection: 'row'}}>
       {this.state.triggers.map(trigger => <Button testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
       </View>
-      <TestedComponent componentId="kompotComponent" {...props} />
+      <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />
     </View>);
   }
 
@@ -60,6 +60,7 @@ global.React = React;
 global.ReactNative = ReactNative;
 global.KompotContainer = Container;
 global.kompotCodeInjector = kompotCodeInjector;
+global.savedComponentRef = null;
 global.triggers = {};
 
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
