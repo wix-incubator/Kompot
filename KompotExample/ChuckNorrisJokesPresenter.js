@@ -12,7 +12,6 @@ export class ChuckNorrisJokesPresenter extends React.Component {
   }
   componentWillMount(){
     fetchJoke().then(joke => this.setState({joke}))
-    global.fakeNavigationLib && global.fakeNavigationLib(this);
   }
 
   onNavigationEvent(event){

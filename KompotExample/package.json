@@ -20,8 +20,8 @@
     "babel-jest": "23.2.0",
     "babel-polyfill": "^6.26.0",
     "babel-preset-react-native": "4.0.0",
-    "detox": "^8.0.0",
-    "kompot": "^1.24.0",
+    "detox": "^8.1.1",
+    "kompot": "^1.25.0",
     "mocha": "^5.2.0",
     "react-test-renderer": "16.3.1"
   },

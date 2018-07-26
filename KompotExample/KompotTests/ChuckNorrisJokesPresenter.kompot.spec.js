@@ -3,7 +3,6 @@ const Kompot = require('kompot');
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter').ChuckNorrisJokesPresenter;
 component.kompotInjector({
   default: () => {
-    global.fakeNavigationLib = (componentRef) => global.componentRef = componentRef;
     const JokeService = require('../fetchJokeService');
     JokeService.fetchJoke = async () => {
       return Promise.resolve('A mocked joke fetched from the joke service!');
@@ -16,7 +15,7 @@ component.kompotInjector({
     }
   },
   triggerNavigationEvent:() => {
-    global.componentRef.onNavigationEvent('some event!');
+    global.savedComponentRef.onNavigationEvent('some event!');
   }
 })
 
