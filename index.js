@@ -13,6 +13,7 @@ class Container extends React.Component {
   }
   componentDidMount() {
     global.onComponentToTestReady((TestedComponent, props, triggers) => this.setState({ TestedComponent, props, triggers}));
+    run();
   }
   renderLoader() {
     return (
@@ -36,7 +37,7 @@ class Container extends React.Component {
     return (
     <View style={{height: Dimensions.get('window').height}}>
       <View style={{display: 'flex', flexDirection: 'row'}}>
-      {this.state.triggers.map(trigger => <Button testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
+      {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
       </View>
       <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />
     </View>);
@@ -64,9 +65,11 @@ global.savedComponentRef = null;
 global.triggers = {};
 
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
-Promise.all([fetchAndSetTriggers(), fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
-  requireComponentSpecFile();
-})
+function run() {
+  Promise.all([fetchAndSetTriggers(), fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
+    requireComponentSpecFile();
+  })
+}
 
 async function fetchAndSetGlobals() {
   try {
