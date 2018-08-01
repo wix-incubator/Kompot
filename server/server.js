@@ -5,6 +5,7 @@ const app = express();
 let currentComponent;
 let globals;
 let props;
+let triggers;
 
 function reset() {
   globals = {};
