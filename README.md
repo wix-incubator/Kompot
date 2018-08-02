@@ -46,6 +46,7 @@ describe('Our first test', () => {
 }
 ```
 
+Replace `<your-app-name>` with the name of your app as you give to `AppRegistry.registerComponent()`, and replace `<your_configuration_name>` with your real configuration name as it appears in your package.json under `detox`.
 
 #### 6. run:
 `npm run start-kompot && npm run test`
