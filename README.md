@@ -34,7 +34,7 @@ describe('ChuckNorrisJokesPresenter', () => {
   })
 });
 ```
-
+## Api:
 
 ### **KompotRequire(pathToComponent)**
 You should use this method instead of the native require in order to require your component.
@@ -42,7 +42,23 @@ You should use this method instead of the native require in order to require you
 const component = Kompot.kompotRequire('../App').App;
 ```
 
-See below about the returned **component** object.
+When you require a component, you get a `component` object with the following props:
+* **withProps(object)**: an object with the props you want to supply to the component. If you pass a function as a prop, be careful not to refernce any variable outside of the function scope! Props can only be primitievs or simple funciton. If you need to pass a complex prop like es6 class, you need to use Mocks and the global `componentProps` value. 
+* **withMocks([strings])**: an array of strings with the names of the mocks to be applied. 
+* **withTriggers([strings])**: an array of strings with the name of the triggers to be applied.
+* **async mount()** mount the component for the current test. 
+
+You will need to mount your component on every tests:
+
+```javascript
+it('should do something', () => {
+  component
+    .withProps({someProp: 'hello', onPress: () => console.log('hello!)})
+    .withMocks(['SOME_MOCK'])
+    .withTriggers(['someTrigger'])
+    .mount();
+});
+```
 
 ### **Mocks**
 Mocks are just regular functions that you can pass to the KompotInjector in order to mock different functionalities.
@@ -91,12 +107,22 @@ component.kompotInjector({
 })
 ```
 
-If you want to activate some triger in some test, you need to mount the component with triggers, and then interact with the trigger with detox, using the name of the trigger as its `id`:
+### **Globals**
+Inside your KompotInjector scope you can make use of the following globals:
+* **`global.componentProps`**: The props object that will be pass to the component. This object will be merged with all the props you supply to `component.withProps()`. You can use this object to pass to your component some complex props, like es6 classes.
+
+* **`global.savedComponentRef`**: The mounted component ref.
+
+Example:
+
 ```javascript
-it('should do something', async () => {
-  component.withTriggers(['someTrigger']).mount();
-  await element(by.id('someTrigger')).tap(); //will activate the trigger.
-});
+component.kompotInjector({
+  SOME_MOCK: () => {
+    const JokeClass = require('./Joke');
+    global.componentProps.joke = JokeClass;
+    global.savedComponentRef.scrollTo('bottom');
+  }
+})
 
 
 ### **KompotInjector(Obj)**:
@@ -118,14 +144,6 @@ component.kompotInjector({
   }
 })
 ```
-
-### **The Component Object**
-When you require a component, you get a component object with the following props:
-* **withProps(object)**: an object with the props to give the component.
-* **withMocks([strings])**: an array of strings with the names of the mocks to be applied. 
-* **withTriggers([strings])**: an array of strings with the name of the triggers to be applied.
-* **async mount()** mount the component for the current test. 
-
 
 ## Kompot cli
 
