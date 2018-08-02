@@ -42,9 +42,10 @@ describe('Our first test', () => {
 ```json
 "scripts":{
    "start-kompot": "kompot -srk",
-   "test": "npm run build-tests && detox test -c <your_configuration_name>",
+   "test": "kompot -b <your-app-name> && detox test -c <your_configuration_name>",
 }
 ```
+
 
 #### 6. run:
 `npm run start-kompot && npm run test`
