@@ -1,12 +1,9 @@
 # Kompot
 A utility library for testing React Native components using Detox
 
-
-
 ## Getting Started
 
 #### 1. install Kompot:
-
 `npm install --save-dev kompot`
 
 #### 2. install Detox:
@@ -14,7 +11,8 @@ A utility library for testing React Native components using Detox
 
 #### 3. create some component that you want to test:
 for example: `App.js`:
-```javascript
+
+```js
 import React from 'react';
 import {Text} from 'react-native';
 
@@ -23,13 +21,12 @@ export class App extends React.Component {
     return <Text>Hello world</Text>;
   }
 }
-
-
 ```
+
 #### 4. add your first test:
 create a file called `FirstTest.kompot.spec.js`:
 
-```javascript
+```js
 const Kompot = require('kompot');
 const component = Kompot.kompotRequire('App').App;
 
@@ -41,6 +38,7 @@ describe('Our first test', () => {
 ```
 
 #### 5. add the following scripts to your `package.json`:
+
 ```json
 "scripts":{
    "start-kompot": "kompot -srk",
@@ -48,16 +46,15 @@ describe('Our first test', () => {
 }
 ```
 
-
 #### 6. run:
 `npm run start-kompot && npm run test`
-
 
 ## API:
 
 ### **KompotRequire(pathToComponent)**
 You should use this method instead of the native require in order to require your component.
-```javascript
+
+```js
 const component = Kompot.kompotRequire('../App').App;
 ```
 
@@ -69,7 +66,7 @@ When you require a component, you get a `component` object with the following pr
 
 You will need to mount your component on every tests:
 
-```javascript
+```js
 it('should do something', async () => {
   await component
     .withProps({someProp: 'hello', onPress: () => console.log('hello!')})
@@ -84,7 +81,7 @@ Mocks are just regular functions that you can pass to the KompotInjector in orde
 The mocks function should not reference variables outside of their scope, but they can require any file they want.
 You should define all the mocks directly in the KompotInjector object:
 
-```javascript
+```js
 const someVarOutOfScope = 'hello';
 component.kompotInjector({
   SOME_MOCK: () => {
@@ -98,14 +95,16 @@ component.kompotInjector({
 ```
 
 If you want to activate some mock in some test, you need to mount the component with mocks:
-```javascript
+
+```js
 it('should do something', () => {
   component.withMocks(['SOME_MOCK']).mount();
 });
 ```
 
 You can create a `default` mock that will be activated for all the tests:
-```javascript
+
+```js
 component.kompotInjector({
   default: () => {
       const JokeService = require('../fetchJokeService');
@@ -113,17 +112,15 @@ component.kompotInjector({
   }
 });
 ```
-
-
 ### **Triggers**
 Sometimes you need to trigger functions that during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do using triggers. Triggers should be supplied to the kompotInjector just like mocks. If you need to interact with you component, you can use the `savedComponentRef` global.
 
-```javascript
+```js
 component.kompotInjector({
   someTrigger: () => {
     global.savedComponentRef.scrollTo('bottom');
   }
-})
+});
 ```
 
 ### **Globals**
@@ -132,9 +129,9 @@ Inside your KompotInjector scope you can make use of the following globals:
 
 * **`global.savedComponentRef`**: The mounted component ref.
 
-Example:
+**Example:**
 
-```javascript
+```js
 component.kompotInjector({
   SOME_MOCK: () => {
     const JokeClass = require('./Joke');
@@ -142,12 +139,12 @@ component.kompotInjector({
     global.savedComponentRef.scrollTo('bottom');
   }
 })
-
+```
 
 ### **KompotInjector(Obj)**:
 Injects the given mocks and triggers into the app.
 
-```javascript
+```js
 component.kompotInjector({
   default: () => { //the default function will be called for each test.
     const JokeService = require('../fetchJokeService');
@@ -164,7 +161,7 @@ component.kompotInjector({
 })
 ```
 
-## Kompot cli
+## Kompot CLI
 
 ```
 usage: kompot-cli.js [-h] [-s] [-k] [-r] [-b appName]
@@ -192,10 +189,8 @@ Optional arguments:
                         this file
 ```
 
-
-
 ## Example:
-```javascript
+```js
 const Kompot = require('kompot');
 //require the component that we want to test:
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
