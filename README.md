@@ -53,7 +53,7 @@ describe('Our first test', () => {
 `npm run start-kompot && npm run test`
 
 
-## Api:
+## API:
 
 ### **KompotRequire(pathToComponent)**
 You should use this method instead of the native require in order to require your component.
