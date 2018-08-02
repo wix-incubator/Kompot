@@ -29,7 +29,7 @@ export class App extends React.Component {
 #### 4. add your first test:
 create a file called `FirstTest.kompot.spec.js`:
 
-```javascirpt
+```javascript
 const Kompot = require('kompot');
 const component = Kompot.kompotRequire('App').App;
 
@@ -41,7 +41,7 @@ describe('Our first test', () => {
 ```
 
 #### 5. add the following scripts to your `package.json`:
-```javascript
+```json
 "scripts":{
    "start-kompot": "kompot -srk",
    "test": "npm run build-tests && detox test -c <your_configuration_name>",
