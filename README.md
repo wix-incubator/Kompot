@@ -51,9 +51,9 @@ When you require a component, you get a `component` object with the following pr
 You will need to mount your component on every tests:
 
 ```javascript
-it('should do something', () => {
-  component
-    .withProps({someProp: 'hello', onPress: () => console.log('hello!)})
+it('should do something', async () => {
+  await component
+    .withProps({someProp: 'hello', onPress: () => console.log('hello!')})
     .withMocks(['SOME_MOCK'])
     .withTriggers(['someTrigger'])
     .mount();
