@@ -164,7 +164,7 @@ component.kompotInjector({
 ## Kompot CLI
 
 ```
-usage: kompot-cli.js [-h] [-s] [-k] [-r] [-b appName]
+usage: kompot [-h] [-s] [-k] [-r] [-b appName]
                      [-t {react-native-navigation}] [-i filePath]
                      [-l filePath]
 
