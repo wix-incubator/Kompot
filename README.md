@@ -1,9 +1,13 @@
 # Kompot
 A utility library for testing React Native components using Detox
 
+
+
 ## Installation 
 
 `npm install --save-dev kompot`
+
+
 ## Example:
 ```javascript
 const Kompot = require('kompot');
@@ -30,9 +34,9 @@ describe('ChuckNorrisJokesPresenter', () => {
   })
 });
 ```
-## API:
 
-### **KompotRequire(pathToComponent)**:
+
+### **KompotRequire(pathToComponent)**
 You should use this method instead of the native require in order to require your component.
 ```javascript
 const component = Kompot.kompotRequire('../App').App;
@@ -40,8 +44,63 @@ const component = Kompot.kompotRequire('../App').App;
 
 See below about the returned **component** object.
 
+### **Mocks**
+Mocks are just regular functions that you can pass to the KompotInjector in order to mock different functionalities.
+The mocks function should not reference variables outside of their scope, but they can require any file they want.
+You should define all the mocks directly in the KompotInjector object:
+
+```javascript
+const someVarOutOfScope = 'hello';
+component.kompotInjector({
+  SOME_MOCK: () => {
+    const JokeService = require('../fetchJokeService');
+    console.log(someVarOutOfScope) //will print undefined! don't reference out-of-scope vars!
+    JokeService.fetchJoke = async () => {
+      return Promise.resolve('This is a lame Chuck Norris joke')
+    }
+  }
+})
+```
+
+If you want to activate some mock in some test, you need to mount the component with mocks:
+```javascript
+it('should do something', () => {
+  component.withMocks(['SOME_MOCK']).mount();
+});
+```
+
+You can create a `default` mock that will be activated for all the tests:
+```javascript
+component.kompotInjector({
+  default: () => {
+      const JokeService = require('../fetchJokeService');
+      JokeService.mockSomeThing = () => console.log('This will be mocked for all tests!');
+  }
+});
+```
+
+
+### **Triggers**
+Sometimes you need to trigger functions that during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do using triggers. Triggers should be supplied to the kompotInjector just like mocks. If you need to interact with you component, you can use the `savedComponentRef` global.
+
+```javascript
+component.kompotInjector({
+  someTrigger: () => {
+    global.savedComponentRef.scrollTo('bottom');
+  }
+})
+```
+
+If you want to activate some triger in some test, you need to mount the component with triggers, and then interact with the trigger with detox, using the name of the trigger as its `id`:
+```javascript
+it('should do something', async () => {
+  component.withTriggers(['someTrigger']).mount();
+  await element(by.id('someTrigger')).tap(); //will activate the trigger.
+});
+
+
 ### **KompotInjector(Obj)**:
-Use this function when you need to mock things.
+Injects the given mocks and triggers into the app.
 
 ```javascript
 component.kompotInjector({
@@ -59,21 +118,16 @@ component.kompotInjector({
   }
 })
 ```
-You can decide which mock will be activated when you are mounting the component with mocks:
-```javascript
-component.withMocks(['MOCK_LAME_JOKE']).mount();
-```
 
-The `default` mock will be always activated.
-
-### **The Component Object**:
+### **The Component Object**
 When you require a component, you get a component object with the following props:
 * **withProps(object)**: an object with the props to give the component.
 * **withMocks([strings])**: an array of strings with the names of the mocks to be applied. 
+* **withTriggers([strings])**: an array of strings with the name of the triggers to be applied.
 * **async mount()** mount the component for the current test. 
 
 
-## Kompot cli:
+## Kompot cli
 
 ```
 usage: kompot-cli.js [-h] [-s] [-k] [-r] [-b appName]
