@@ -3,37 +3,56 @@ A utility library for testing React Native components using Detox
 
 
 
-## Installation 
+## Getting Started
+
+#### 1. install Kompot:
 
 `npm install --save-dev kompot`
 
+#### 2. install Detox:
+[Getting Started With Detox](https://github.com/wix/detox/blob/master/docs/Introduction.GettingStarted.md)
 
-## Example:
+#### 3. create some component that you want to test:
+for example: `App.js`:
 ```javascript
-const Kompot = require('kompot');
-//require the component that we want to test:
-const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
+import React from 'react';
+import {Text} from 'react-native';
 
-//write some mocks:
-component.kompotInjector({
-  MOCK_LAME_JOKE: () => {
-    const JokeService = require('../fetchJokeService');
-    JokeService.fetchJoke = async () => {
-      return Promise.resolve('This is a lame Chuck Norris joke')
-    }
+export class App extends React.Component {
+  render() {
+    return <Text>Hello world</Text>;
   }
-})
+}
 
-describe('ChuckNorrisJokesPresenter', () => {
-  it('Should fetch a joke', async () => 
-    await component
-      .withProps({someProp: 'test'})
-      .withMocks(['MOCK_LAME_JOKE']) //use the mock that we specified above
-      .mount();
-    await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
-  })
+
+```
+#### 4. add your first test:
+create a file called `FirstTest.kompot.spec.js`:
+
+```javascirpt
+const Kompot = require('kompot');
+const component = Kompot.kompotRequire('App').App;
+
+describe('Our first test', () => {
+  it('should mount the component', async () => {
+    await component.mount();
+  });
 });
 ```
+
+#### 5. add the following scripts to your `package.json`:
+```javascript
+"scripts":{
+   "start-kompot": "kompot -srk",
+   "test": "npm run build-tests && detox test -c <your_configuration_name>",
+}
+```
+
+
+#### 6. run:
+`npm run start-kompot && npm run test`
+
+
 ## Api:
 
 ### **KompotRequire(pathToComponent)**
@@ -171,4 +190,33 @@ Optional arguments:
                         A path to a file that will be loaded before the
                         mounting of the component. Put all global mocks in
                         this file
+```
+
+
+
+## Example:
+```javascript
+const Kompot = require('kompot');
+//require the component that we want to test:
+const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter');
+
+//write some mocks:
+component.kompotInjector({
+  MOCK_LAME_JOKE: () => {
+    const JokeService = require('../fetchJokeService');
+    JokeService.fetchJoke = async () => {
+      return Promise.resolve('This is a lame Chuck Norris joke')
+    }
+  }
+})
+
+describe('ChuckNorrisJokesPresenter', () => {
+  it('Should fetch a joke', async () => 
+    await component
+      .withProps({someProp: 'test'})
+      .withMocks(['MOCK_LAME_JOKE']) //use the mock that we specified above
+      .mount();
+    await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
+  })
+});
 ```
