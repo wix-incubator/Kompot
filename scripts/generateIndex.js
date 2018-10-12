@@ -8,8 +8,8 @@ const babylon = require('babylon');
 const traverse = require('babel-traverse').default;
 
 const KOMPOT_FILE_EXTENTION = '.kompot.spec.js';
-const OUTPUT_PATH = './node_modules/kompot/generatedRequireKompotSpecs.js';
-
+const OUTPUT_PATH = `${__dirname}/../generatedRequireKompotSpecs.js`;
+const WATCHMAN_TRIGGER_PATH = `${__dirname}/watchmanTrigger.js`
 const parser = new ArgumentParser();
 
 parser.addArgument(['-n', '--name'], {
@@ -31,12 +31,13 @@ parser.addArgument(['-l', '--load'], {
 });
 
 const args = parser.parseArgs();
-
 filePathList = getAllFilesWithKompotExtention();
 
 console.log('Found kompot specs:');
 console.log(filePathList.join('\n'));
 console.log('\n');
+
+startWatchmanOnFiles(filePathList);
 
 const requireStatements = filePathList
   .map(filePath => {
@@ -134,4 +135,11 @@ function getAllFilesWithKompotExtention() {
   const allFilesWithKompotExtention = execSync(`find . -not \\( -path ./node_modules -prune \\)  -not \\( -path ./.idea -prune \\)  -type f  -name '*.kompot.*.js'`).toString();
   const filePathList = allFilesWithKompotExtention.split('\n').filter(path => path !== '');
   return filePathList;
+}
+
+function startWatchmanOnFiles(filePathList) {
+  console.log('Start watching files using watchman');
+  filePathList.forEach(fileName => {
+    execSync(`watchman -- trigger ${Path.dirname(fileName)} ${Path.basename(fileName)} "${Path.basename(fileName)}" -- ${Path.resolve(WATCHMAN_TRIGGER_PATH)} "node ${__dirname}/generateIndex.js ${process.argv.slice(2)}"`);
+  });
 }
