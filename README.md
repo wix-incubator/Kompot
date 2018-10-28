@@ -115,7 +115,7 @@ component.kompotInjector({
 });
 ```
 ### **Triggers**
-Sometimes you need to trigger functions that during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do using triggers. Triggers should be supplied to the kompotInjector just like mocks. If you need to interact with you component, you can use the `savedComponentRef` global.
+Sometimes you need to trigger functions during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do using triggers. Triggers should be supplied to the kompotInjector just like mocks. If you need to interact with you component, you can use the `savedComponentRef` global.
 
 ```js
 component.kompotInjector({
