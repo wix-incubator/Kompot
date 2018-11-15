@@ -130,6 +130,7 @@ Inside your KompotInjector scope you can make use of the following globals:
 * **`global.componentProps`**: The props object that will be pass to the component. This object will be merged with all the props you supply to `component.withProps()`. You can use this object to pass to your component some complex props, like es6 classes.
 
 * **`global.savedComponentRef`**: The mounted component ref.
+* **`global.useMocks(mockGeneratorFunction)`**: Use this method inside your kompot-setup file in order to use conditional global mock objects (same like kompotInjector but globally injected).
 
 **Example:**
 

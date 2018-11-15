@@ -49,6 +49,7 @@ class Container extends React.Component {
 }
 
 let onComponentToTestReadyListener;
+let requireGlobalMocks = [];
 global.componentProps = {};
 global.onComponentToTestReady = function (listener) {
   onComponentToTestReadyListener = listener;
@@ -63,6 +64,7 @@ global.KompotContainer = Container;
 global.kompotCodeInjector = kompotCodeInjector;
 global.savedComponentRef = null;
 global.triggers = {};
+global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
 function run() {
@@ -111,7 +113,9 @@ async function fetchAndSetProps() {
   }
 }
 
-function kompotCodeInjector(injectorObject){
+function kompotCodeInjector(objectToInject){
+  const mocks = requireGlobalMocks.map(getMocks => getMocks());
+  const injectorObject = Object.assign({}, ...mocks, objectToInject);
   injectorObject.default && injectorObject.default();
   Object.keys(injectorObject).forEach(key => {
     if(key !== 'default' && global[key]) {
