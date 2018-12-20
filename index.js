@@ -1,4 +1,4 @@
-import ReactNative, { ActivityIndicator, View, Dimensions, Button} from 'react-native';
+import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView} from 'react-native';
 import React from 'react';
 import {deSerialize } from './Serialize';
 
@@ -36,9 +36,10 @@ class Container extends React.Component {
 
     return (
     <View style={{height: Dimensions.get('window').height}}>
-      <View style={{display: 'flex', flexDirection: 'row'}}>
+    <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
       {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
-      </View>
+    </SafeAreaView>
+ 
       <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />
     </View>);
   }
