@@ -9,7 +9,8 @@ module.exports = {
     let props = {};
 
     //helpers:
-    const getArrayQuery = (globals) => globals.map(global => `${global}=true`).join('&');
+    const extractMockName = (mock => typeof mock === 'string' ? mock : mock.name);
+    const getArrayQuery = (globals) => globals.map(extractMockName).map(global => `${global}=true`).join('&');
     const getPropsQuery = (props) => `props=${encodeURIComponent(serialize(props))}`;
 
     const testComponentBuilder =  {

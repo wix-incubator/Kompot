@@ -39,7 +39,7 @@ class Container extends React.Component {
     <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
       {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
     </SafeAreaView>
- 
+
       <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />
     </View>);
   }
@@ -66,7 +66,10 @@ global.kompotCodeInjector = kompotCodeInjector;
 global.savedComponentRef = null;
 global.triggers = {};
 global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
-
+global.kompot = {
+  useMocks: global.useMocks,
+  savedComponentRef: global.savedComponentRef
+};
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
 function run() {
   Promise.all([fetchAndSetTriggers(), fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
