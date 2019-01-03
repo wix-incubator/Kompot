@@ -1,5 +1,5 @@
 # Example
-Inside mock.js:
+Inside `mock.js`:
 ```js
 module.exports = {
     mockLameJoke: () => {
@@ -11,7 +11,7 @@ module.exports = {
 }
 ```
 
-Inside ChuckNorrisJokePresenter.kompot.spec.js:
+Inside `ChuckNorrisJokePresenter.kompot.spec.js`:
 ```js
 const Kompot = require('kompot');
 //require the component that we want to test:

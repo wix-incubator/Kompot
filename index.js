@@ -68,7 +68,8 @@ global.triggers = {};
 global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 global.kompot = {
   useMocks: global.useMocks,
-  savedComponentRef: global.savedComponentRef
+  savedComponentRef: global.savedComponentRef,
+  componentProps: global.componentProps
 };
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
 function run() {

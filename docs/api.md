@@ -7,43 +7,58 @@ You should use this method in order to require your component.
 const component = Kompot.kompotRequire('../App').App;
 ```
 
-When you require a component, you get a `component` object with the following props:
-* **withProps(object)**: an object with the props you want to supply to the component. If you pass a function as a prop, be careful not to refernce any variable outside of the function scope! Props can only be primitives or functions. If you need to pass a complex prop like es6 class, you need to use Mocks and the global `componentProps` value. 
-* **withMocks([strings])**: an array of strings with the names of the mocks to be applied. 
-* **withTriggers([strings])**: an array of strings with the name of the triggers to be applied.
-* **async mount()** mount the component for the current test. 
+When you require a component, you get a `component` object with the following methods:
 
-You will need to mount your component on every tests:
+### withProps(object)
+ An object with the props you want to supply to the component. If you pass a function as a prop, be careful not to reference any variable outside of the function scope! Props can 
+ only be primitives or functions. If you need to pass a complex prop like es6 class, you need to use Mocks and the global `componentProps` value. 
+
+### withMocks([mockFunctions])
+An array of mock functions. See the `Mocks` and `Triggers` section for more details.
+
+### withTriggers([triggerFunctions])
+
+An array of trigger functions. See the `Mocks` and `Triggers` section for more details.
+### async mount()
+mount the component for the current test. 
+
+### Example
 
 ```js
+const Mocks = require('./mocks');
+
 it('should do something', async () => {
   await component
     .withProps({someProp: 'hello', onPress: () => console.log('hello!')})
-    .withMocks(['SOME_MOCK'])
-    .withTriggers(['someTrigger'])
+    .withMocks([Mocks.someMock1, Mocks.someMock2])
+    .withTriggers([Mocks.someTrigger])
     .mount();
 });
 ```
 
 ## Mocks
-Mocks are just regular functions that you can pass to the KompotInjector in order to mock different functionalities.
-The mocks function should not reference variables outside of their scope, but they can require any file they want.
-You should define all the mocks directly in the KompotInjector object:
+In order to mock things and define triggers, you need to specify a mock file (or files) in your kompot-setup file:
 
 ```js
-const someVarOutOfScope = 'hello';
-component.kompotInjector({
-  SOME_MOCK: () => {
+global.kompot.useMocks(() => require('./path/to/mockFile.js'));
+```
+
+The mock file looks like this:
+```js
+module.exports = {
+  mockLameJoke: () => {
     const JokeService = require('../fetchJokeService');
-    console.log(someVarOutOfScope) //will print undefined! don't reference out-of-scope vars!
     JokeService.fetchJoke = async () => {
       return Promise.resolve('This is a lame Chuck Norris joke')
     }
+  },
+  triggerNavigationEvent:() => {
+    global.savedComponentRef.onNavigationEvent('some event!');
   }
-})
+}
 ```
 
-If you want to activate some mock in some test, you need to mount the component with mocks:
+Then, you should mount your component with mocks:
 
 ```js
 it('should do something', () => {
@@ -51,18 +66,8 @@ it('should do something', () => {
 });
 ```
 
-You can create a `default` mock that will be activated for all the tests:
-
-```js
-component.kompotInjector({
-  default: () => {
-      const JokeService = require('../fetchJokeService');
-      JokeService.mockSomeThing = () => console.log('This will be mocked for all tests!');
-  }
-});
-```
 ## Triggers
-Sometimes you need to trigger functions during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do using triggers. Triggers should be supplied to the kompotInjector just like mocks. If you need to interact with you component, you can use the `savedComponentRef` global.
+Sometimes you need to trigger functions during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do it using triggers. Triggers should be defined just like mocks. If you need to interact with your component, you can use the `savedComponentRef` global.
 
 ```js
 component.kompotInjector({
@@ -72,42 +77,26 @@ component.kompotInjector({
 });
 ```
 
-## Globals
-Inside your KompotInjector scope you can make use of the following globals:
-* **`global.componentProps`**: The props object that will be pass to the component. This object will be merged with all the props you supply to `component.withProps()`. You can use this object to pass to your component some complex props, like es6 classes.
-
-* **`global.savedComponentRef`**: The mounted component ref.
-* **`global.useMocks(mockGeneratorFunction)`**: Use this method inside your kompot-setup file in order to use conditional global mock objects (same like kompotInjector but globally injected).
-
-**Example:**
-
+## Kompot Globals
+Kompot will define a kompot global object with props and methods that you can use inside your mock files and your setup file like this: 
 ```js
 component.kompotInjector({
   SOME_MOCK: () => {
     const JokeClass = require('./Joke');
-    global.componentProps.joke = JokeClass;
-    global.savedComponentRef.scrollTo('bottom');
+    global.kompot.componentProps.joke = JokeClass;
+    global.kompot.savedComponentRef.scrollTo('bottom');
   }
 })
 ```
 
-## KompotInjector(Obj)
-Injects the given mocks and triggers into the app.
+### componentProps
+The props object that will be passed to the component. This object will be merged with all the props you supply to `component.withProps()`. You can use this object to pass to your component some complex props, like es6 classes.
 
-```js
-component.kompotInjector({
-  default: () => { //the default function will be called for each test.
-    const JokeService = require('../fetchJokeService');
-    JokeService.fetchJoke = async () => {
-      return Promise.resolve('A mocked joke fetched from the joke service!');
-    }
-  },
-  MOCK_LAME_JOKE: () => { //will be called only if the componet is mounting with the 'MOCK_LAME_JOKE' mock.
-    const JokeService = require('../fetchJokeService');
-    JokeService.fetchJoke = async () => {
-      return Promise.resolve('This is a lame Chuck Norris joke')
-    }
-  }
-})
-```
+### savedComponentRef
+
+A ref to the mounted component.
+
+### useMocks(mockGeneratorFunction)
+
+Use this function inside your kompot-setup file in order to require your mock files.
 
