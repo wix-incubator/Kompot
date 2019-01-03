@@ -4,9 +4,9 @@
 `npm install --save-dev kompot`
 
 #### 2. install Detox:
-[Getting Started With Detox](https://github.com/wix/detox/blob/master/docs/Introduction.GettingStarted.md)
+Follow [Getting Started With Detox](https://github.com/wix/detox/blob/master/docs/Introduction.GettingStarted.md) and choose `mocha` as the test runner (`jest` doesn't work well yet).
 
-#### 3. create some component that you want to test:
+#### 3. create an example component:
 for example: `App.js`:
 
 ```js
@@ -15,7 +15,7 @@ import {Text} from 'react-native';
 
 export class App extends React.Component {
   render() {
-    return <Text>Hello world</Text>;
+    return <Text testID="hello">Hello world</Text>;
   }
 }
 ```
@@ -30,6 +30,7 @@ const component = Kompot.kompotRequire('App').App;
 describe('Our first test', () => {
   it('should mount the component', async () => {
     await component.mount();
+    await expect(element(by.id('hello'))).toBeVisible();
   });
 });
 ```
