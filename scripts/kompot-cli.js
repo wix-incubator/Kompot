@@ -9,7 +9,8 @@ let execSync = require('child_process').execSync;
 const parser = new ArgumentParser();
 parser.addArgument('command', {
   nargs: '*',
-  choices: ['start', 'build']
+  //todo: uncomment after deprecation of -srk:
+  //choices: ['start', 'build'] 
 });
 
 parser.addArgument(['-s', '--start'], {
