@@ -80,13 +80,11 @@ component.kompotInjector({
 ## Kompot Globals
 Kompot will define a kompot global object with props and methods that you can use inside your mock files and your setup file like this: 
 ```js
-component.kompotInjector({
-  SOME_MOCK: () => {
-    const JokeClass = require('./Joke');
-    global.kompot.componentProps.joke = JokeClass;
-    global.kompot.savedComponentRef.scrollTo('bottom');
+module.exports = {
+  triggerNavigationEvent:() => {
+    global.kompot.savedComponentRef.onNavigationEvent('some event!');
   }
-})
+}
 ```
 
 ### componentProps

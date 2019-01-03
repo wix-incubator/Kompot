@@ -38,8 +38,8 @@ describe('Our first test', () => {
 
 ```json
 "scripts":{
-   "start-kompot": "kompot -srk",
-   "test": "kompot -b <your-app-name> && detox test -c <your_configuration_name>",
+   "start-kompot": "kompot start",
+   "test": "kompot build -n <your-app-name> && detox test -c <your_configuration_name>",
 }
 ```
 
