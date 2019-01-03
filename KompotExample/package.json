@@ -4,26 +4,25 @@
   "private": true,
   "scripts": {
     "start": "node node_modules/react-native/local-cli/cli.js start",
-    "start-kompot": "kompot -sr",
+    "start-kompot": "kompot -srk",
     "detox-build": "detox build -c ios.sim.debug",
-    "kill": "lsof -i:8081 | awk 'NR!=1 {print $2}' | xargs kill && lsof -i:2600 | awk 'NR!=1 {print $2}' | xargs kill",
     "basic-tests": "kompot -b KompotExample -l kompotGlobalMocks.js  && detox test -c ios.sim.debug -s KompotTests",
     "custom-root-test": "kompot -b KompotExample -i kompotCustomRoot  && detox test -c ios.sim.debug -s CustomRootTest",
     "test": "npm run detox-build && npm run test-all",
-    "test-all": "npm run kill && kompot -sr & npm run basic-tests && npm run custom-root-test && npm run kill"
+    "test-all": "kompot -srk & npm run basic-tests && npm run custom-root-test"
   },
   "dependencies": {
-    "react": "16.3.1",
-    "react-native": "0.55.4"
+    "react": "16.6.1",
+    "react-native": "0.57.407"
   },
   "devDependencies": {
-    "babel-jest": "23.2.0",
-    "babel-polyfill": "^6.26.0",
-    "babel-preset-react-native": "4.0.0",
+    "babel-jest": "23.6.0",
+    "jest": "23.6.0",
+    "metro-react-native-babel-preset": "0.51.1",
     "detox": "^8.1.1",
-    "kompot": "^1.29.0",
+    "kompot": "^2.0.0",
     "mocha": "^5.2.0",
-    "react-test-renderer": "16.3.1"
+    "react-test-renderer": "16.6.1"
   },
   "detox": {
     "configurations": {

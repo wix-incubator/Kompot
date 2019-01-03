@@ -1,17 +1,7 @@
 
 const Kompot = require('kompot');
 const component = Kompot.kompotRequire('../App').App;
-
-component.kompotInjector({
-  MOCK_CLASS_PROP: () => {
-    class Joke {
-      getJoke(){
-        return 'a foo walks into a bar';
-      }
-    }
-    global.componentProps.jokeClass = new Joke();
-  }
-});
+const Mocks = require('./mocks');
 
 describe('App', () => {
   it('Using global mocks file to mock a component across app (--load option) ', async () => {
@@ -22,7 +12,7 @@ describe('App', () => {
   });
 
   it('mocking a prop that is a class', async () => {
-    await component.withMocks(['MOCK_CLASS_PROP']).mount();
+    await component.withMocks([Mocks.mockClassProp]).mount();
     await expect(element(by.id('jokeClass'))).toBeVisible();
     await expect(element(by.text('a foo walks into a bar'))).toBeVisible();
   });

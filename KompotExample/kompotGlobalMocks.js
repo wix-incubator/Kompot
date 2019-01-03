@@ -6,3 +6,5 @@ const mockedHeader = (props) => {
 }
 
 HeaderModule.Header = mockedHeader;
+
+global.kompot.useMocks(() => require('./KompotTests/mocks'));

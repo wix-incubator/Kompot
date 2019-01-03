@@ -1,25 +1,12 @@
 
 const Kompot = require('kompot');
 const component = Kompot.kompotRequire('../ChuckNorrisJokesPresenter').ChuckNorrisJokesPresenter;
-component.kompotInjector({
-  default: () => {
-    const JokeService = require('../fetchJokeService');
-    JokeService.fetchJoke = async () => {
-      return Promise.resolve('A mocked joke fetched from the joke service!');
-    }
-  },
-  MOCK_LAME_JOKE: () => {
-    const JokeService = require('../fetchJokeService');
-    JokeService.fetchJoke = async () => {
-      return Promise.resolve('This is a lame Chuck Norris joke')
-    }
-  },
-  triggerNavigationEvent:() => {
-    global.savedComponentRef.onNavigationEvent('some event!');
-  }
-})
+const Mocks = require('./mocks');
 
 describe('ChuckNorrisJokesPresenter', () => {
+  beforeEach(()=> {
+    component.withMocks([Mocks.mockJokeService])
+  })
   it('Sanity check', async () => {
     await component.mount();
     await expect(element(by.id('chuckNorisJoke'))).toBeVisible();
@@ -31,20 +18,20 @@ describe('ChuckNorrisJokesPresenter', () => {
   })
 
   it('Using triggers', async () => {
-    await component.withTriggers(['triggerNavigationEvent']).mount();
+    await component.withTriggers([Mocks.triggerNavigationEvent]).mount();
     await element(by.id('triggerNavigationEvent')).tap();
     await expect(element(by.text('some event!'))).toBeVisible();
   })
 
   it('Using a specific mock for test', async () => {
-    await component.withMocks(['MOCK_LAME_JOKE']).mount();
+    await component.withMocks([Mocks.mockLameJoke]).mount();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Chuck Norris joke"');
   })
 
   it('Passing basic prop', async () => {
     await component
       .withProps({replaceWith: 'Kompot'})
-      .withMocks(['MOCK_LAME_JOKE'])
+      .withMocks([Mocks.mockLameJoke])
       .mount();
     await expect(element(by.id('chuckNorisJoke'))).toHaveText('"This is a lame Kompot joke"');
   })
@@ -60,7 +47,7 @@ describe('ChuckNorrisJokesPresenter', () => {
   it('Chaining order does not matter', async () => {
     await component
       .withProps({onPress: () => alert('onPress clicked!')})
-      .withMocks(['MOCK_LAME_JOKE'])
+      .withMocks([Mocks.mockLameJoke])
       .withProps({replaceWith: 'Kompot'})
       .mount();
     await element(by.id('clickable')).tap();
