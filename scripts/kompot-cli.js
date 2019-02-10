@@ -13,6 +13,10 @@ parser.addArgument('command', {
   //choices: ['start', 'build'] 
 });
 
+parser.addArgument(['-e', '--entry-point'], {
+  help: `The path to the entry-point. Defaults to index.js`,
+});
+
 parser.addArgument(['-s', '--start'], {
   help: `Launch react-native's packager.`,
   action: 'storeTrue',
@@ -59,6 +63,25 @@ const args = parser.parseArgs();
 const command = args.command[0];
 if (args.app_type && args.init_root) {
   throw new Error(`Cannot use '--init-root' option along with '--app-type'.`)
+}
+
+if(args.entry_point) {
+  const fileName = Path.basename(args.entry_point);
+  const dirName = Path.dirname(args.entry_point);
+  const kompotIndex = Path.resolve(`./node_modules/kompot/index.js`);
+  execSync(`mkdir -p ./node_modules/kompot/${dirName}`, (e, stdout, stderr) => {
+    if (e instanceof Error) {
+      console.error(e);
+      throw e;
+    }
+    console.log('stdout ', stdout);
+    console.log('stderr ', stderr);
+  });
+    fs.writeFile(`./node_modules/kompot/${dirName}/${fileName}`, `require('${kompotIndex}');`, function(err) {
+      if(err) {
+          return console.log(err);
+      }
+  });
 }
 
 const build = command === COMMANDS.BUILD;
