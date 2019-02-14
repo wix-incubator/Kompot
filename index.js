@@ -1,6 +1,6 @@
-import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView} from 'react-native';
+import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView } from 'react-native';
 import React from 'react';
-import {deSerialize } from './Serialize';
+import { deSerialize } from './Serialize';
 
 const providers = [];
 
@@ -14,7 +14,7 @@ class Container extends React.Component {
     }
   }
   componentDidMount() {
-    global.onComponentToTestReady((TestedComponent, props, triggers) => this.setState({ TestedComponent, props, triggers}));
+    global.onComponentToTestReady((TestedComponent, props, triggers) => this.setState({ TestedComponent, props, triggers }));
     run();
   }
   renderLoader() {
@@ -29,7 +29,7 @@ class Container extends React.Component {
         <ActivityIndicator size="large" color="black" />
       </View>);
   }
-  onTriggerPressed(trigger){
+  onTriggerPressed(trigger) {
     global.triggers[trigger] && global.triggers[trigger]();
   }
 
@@ -46,16 +46,16 @@ class Container extends React.Component {
   renderComponent() {
     const TestedComponent = this.state.TestedComponent;
     return (
-      <View style={{height: Dimensions.get('window').height}}>
-        <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
-          {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
+      <View style={{ height: Dimensions.get('window').height }}>
+        <SafeAreaView style={{ display: 'flex', flexDirection: 'row' }}>
+          {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="." />)}
         </SafeAreaView>
         {this.renderTestedComponentWithProviders()}
       </View>);
   }
 
   render() {
-    return this.state.TestedComponent ? this.renderComponent() :this.renderLoader();
+    return this.state.TestedComponent ? this.renderComponent() : this.renderLoader();
   }
 }
 
@@ -129,15 +129,15 @@ async function fetchAndSetProps() {
   }
 }
 
-function kompotCodeInjector(objectToInject){
+function kompotCodeInjector(objectToInject) {
   const mocks = requireGlobalMocks.map(getMocks => getMocks());
   const injectorObject = Object.assign({}, ...mocks, objectToInject);
   injectorObject.default && injectorObject.default();
   Object.keys(injectorObject).forEach(key => {
-    if(key !== 'default' && global[key]) {
+    if (key !== 'default' && global[key]) {
       injectorObject[key]();
     }
-    if(global.triggers[key]){
+    if (global.triggers[key]) {
       global.triggers[key] = injectorObject[key];
     }
   });
