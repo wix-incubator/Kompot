@@ -98,3 +98,14 @@ A ref to the mounted component.
 
 Use this function inside your kompot-setup file in order to require your mock files.
 
+
+### registerProvider({component, props})
+
+Use this function inside your mocks or kompot-setup, in order to provide a store (or any other provider) to your component.
+
+```js
+import { Provider } from 'react-redux';
+import configureStore from './store/configureStore';
+const store = configureStore({});
+global.kompot.registerProvider({ component: Provider, props: { store } });
+```
