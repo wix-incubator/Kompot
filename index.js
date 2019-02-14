@@ -2,6 +2,8 @@ import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView}
 import React from 'react';
 import {deSerialize } from './Serialize';
 
+const providers = [];
+
 class Container extends React.Component {
   constructor() {
     super();
@@ -30,18 +32,26 @@ class Container extends React.Component {
   onTriggerPressed(trigger){
     global.triggers[trigger] && global.triggers[trigger]();
   }
-  renderComponent(){
-    const TestedComponent = this.state.TestedComponent;
+
+  renderTestedComponentWithProviders() {
     const props = this.state.props;
+    let TestedComponent = this.state.TestedComponent;
+    TestedComponent = <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />;
+    providers.forEach(provider => {
+      TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
+    });
+    return TestedComponent;
+  }
 
+  renderComponent() {
+    const TestedComponent = this.state.TestedComponent;
     return (
-    <View style={{height: Dimensions.get('window').height}}>
-    <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
-      {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
-    </SafeAreaView>
-
-      <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />
-    </View>);
+      <View style={{height: Dimensions.get('window').height}}>
+        <SafeAreaView style={{display: 'flex', flexDirection: 'row'}}>
+          {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="."/>)}
+        </SafeAreaView>
+        {this.renderTestedComponentWithProviders()}
+      </View>);
   }
 
   render() {
@@ -69,7 +79,8 @@ global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 global.kompot = {
   useMocks: global.useMocks,
   savedComponentRef: global.savedComponentRef,
-  componentProps: global.componentProps
+  componentProps: global.componentProps,
+  registerProvider: (provider) => providers.push(provider),
 };
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
 function run() {
