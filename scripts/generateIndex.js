@@ -31,13 +31,11 @@ parser.addArgument(['-l', '--load'], {
 });
 
 const args = parser.parseArgs();
-filePathList = getAllFilesWithKompotExtention();
+filePathList = getAllFilesWithKompotExtension();
 
 console.log('Found kompot specs:');
 console.log(filePathList.join('\n'));
 console.log('\n');
-
-startWatchmanOnFiles(filePathList);
 
 const requireStatements = filePathList
   .map(filePath => {
@@ -131,15 +129,8 @@ function resolveAllPaths(injectorObj, paths, basePath){
   return resolvedInjector;
 }
 
-function getAllFilesWithKompotExtention() {
+function getAllFilesWithKompotExtension() {
   const allFilesWithKompotExtention = execSync(`find . -not \\( -path ./node_modules -prune \\)  -not \\( -path ./.idea -prune \\)  -type f  -name '*.kompot.*.js'`).toString();
   const filePathList = allFilesWithKompotExtention.split('\n').filter(path => path !== '');
   return filePathList;
-}
-
-function startWatchmanOnFiles(filePathList) {
-  console.log('Start watching files using watchman');
-  filePathList.forEach(fileName => {
-    execSync(`watchman -- trigger ${Path.dirname(fileName)} ${Path.basename(fileName)} "${Path.basename(fileName)}" -- ${Path.resolve(WATCHMAN_TRIGGER_PATH)} "node ${__dirname}/generateIndex.js ${process.argv.slice(2)}"`);
-  });
 }
