@@ -38,3 +38,8 @@ describe('ChuckNorrisJokesPresenter', () => {
   })
 });
 ```
+
+## Change log
+
+### 3.0.0
+- support RN59
