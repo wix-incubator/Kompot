@@ -18,7 +18,8 @@
     "kompot.js",
     "rootComponentTemplates.js",
     "index.ios.js",
-    "Serialize.js"
+    "Serialize.js",
+    "initKompotTestSuite.js"
   ],
   "dependencies": {
     "argparse": "^1.0.10",

@@ -1,13 +1,6 @@
-const fetch = require('node-fetch');
-
-async function checkSpy(id){
-  const response = await fetch(`http://localhost:2600/getSpy?spyId=${id}`);
-  return await response.json();
-}
-global.spy = checkSpy;
-
 module.exports = {
   kompotRequire: function (pathToComponent) {
+    const fetch = require('node-fetch');
     const path = require('path');
     const fileName = path.basename(pathToComponent, '.js');
     const {serialize} = require('./Serialize');
