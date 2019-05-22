@@ -12,17 +12,22 @@
     "test-all": "kompot start & npm run basic-tests && npm run custom-root-test"
   },
   "dependencies": {
-    "react": "16.6.1",
-    "react-native": "0.57.407"
+    "react": "16.8.3",
+    "react-native": "0.59.8"
   },
   "devDependencies": {
-    "babel-jest": "23.6.0",
+    "@babel/core": "7.4.5",
+    "@babel/runtime": "7.4.5",
+    "babel-jest": "24.8.0",
+    "jest": "24.8.0",
+    "metro-react-native-babel-preset": "0.54.1",
+    "react-test-renderer": "16.8.3",
     "detox": "^8.1.1",
-    "jest": "23.6.0",
-    "kompot": "^2.1.1",
-    "metro-react-native-babel-preset": "0.51.1",
-    "mocha": "^5.2.0",
-    "react-test-renderer": "16.6.1"
+    "kompot": "wix/kompot#master",
+    "mocha": "^5.2.0"
+  },
+  "jest": {
+    "preset": "react-native"
   },
   "detox": {
     "configurations": {
@@ -30,7 +35,7 @@
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/KompotExample.app",
         "build": "xcodebuild -project /Users/niryo/git/Kompot/KompotExample/ios/KompotExample.xcodeproj -scheme KompotExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build/",
         "type": "ios.simulator",
-        "name": "iPhone 7"
+        "name": "iPhone 8"
       }
     },
     "test-runner": "mocha"
