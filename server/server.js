@@ -1,4 +1,6 @@
-const express = require('express')
+const express = require('express');
+const bodyParser = require('body-parser')
+
 const fs = require('fs');
 const app = express();
 
@@ -6,13 +8,15 @@ let currentComponent;
 let globals;
 let props;
 let triggers;
+let spies;
 
 function reset() {
   globals = {};
   triggers = {}
   props = '{}';
+  spies = {};
 }
-
+app.use( bodyParser.json() );
 app.get('/setCurrentComponent', (req, res) => {
   reset();
   currentComponent = req.query.componentName;
@@ -50,6 +54,21 @@ app.get('/setProps', (req, res) => {
   props = req.query.props;
   console.log('Setting props', props);
   res.send();
+})
+
+app.post('/notifySpy', (req, res) => {
+  console.log('Setting spy', req.body);
+  const id = req.body.id;
+  if(!spies[id]) {
+    spies[id] = [];
+  }
+  spies[id].push(req.body.stringArgs);
+  res.send();
+})
+
+app.get('/getSpy', (req, res) => {
+  console.log('get spy:', req.query.spyId);
+  res.send(spies[req.query.spyId]);
 })
 
 app.get('/getProps', (req, res) => {
