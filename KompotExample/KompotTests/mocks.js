@@ -19,6 +19,10 @@ module.exports = {
       return Promise.resolve('This is a lame Chuck Norris joke')
     }
   },
+  spyDoSomething: () => {
+    const DoSomethingModule = require('../doSomething');
+    DoSomethingModule.doSomething = kompot.spy('doSomething');
+  },
   triggerNavigationEvent:() => {
     global.savedComponentRef.onNavigationEvent('some event!');
   }

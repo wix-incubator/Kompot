@@ -23,7 +23,7 @@
     "metro-react-native-babel-preset": "0.54.1",
     "react-test-renderer": "16.8.3",
     "detox": "^8.1.1",
-    "kompot": "wix/kompot#master",
+    "kompot": "wix/kompot#added-spies",
     "mocha": "^5.2.0"
   },
   "jest": {
