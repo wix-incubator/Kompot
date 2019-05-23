@@ -33,12 +33,11 @@ describe('App', () => {
       await expect(spy('doSomething')).toHaveBeenCalledWith('a', 10, {test: 'bla'});
     });
 
-    it.only('toHaveBeenNthCalledWith', async () => {
+    it('toHaveBeenNthCalledWith', async () => {
       await component.withMocks([Mocks.spyDoSomething]).mount();
       await element(by.id('doSomething')).tap();
       await element(by.id('doSomethingAgain')).tap();
       await expect(spy('doSomething')).toHaveBeenNthCalledWith(1, 'again2');
-      await expect(spy('doSomething')).toHaveBeenNthCalledWith(3, 'again2');
     });
   });
 });
