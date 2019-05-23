@@ -41,6 +41,6 @@ describe('ChuckNorrisJokesPresenter', () => {
 
 ## Change log
 ### 3.1.0 
--added spies
+- added spies
 ### 3.0.0
 - support RN59
