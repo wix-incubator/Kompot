@@ -79,6 +79,9 @@ function spyHandlers(spy) {
 
     async toHaveBeenNthCalledWith(callNum, ...args) {
       const calls = await spy.calls();
+      if(calls.length <= callNum) {
+        throw Error(`Expected spy with id "${spy.id}" to be called ${callNum} times, but it was called only ${calls.length} times`);
+      }
       if (calls) {
         try{
           const parsedCall = JSON.parse(calls[callNum]);
