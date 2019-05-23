@@ -1,3 +1,4 @@
+require('./initKompotTestSuite');
 module.exports = {
   kompotRequire: function (pathToComponent) {
     const fetch = require('node-fetch');

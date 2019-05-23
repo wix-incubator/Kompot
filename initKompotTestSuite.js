@@ -1,6 +1,7 @@
 const fetch = require('node-fetch');
+const {isObject, isEqual} = require('lodash');
 
-async function checkSpy(id) {
+async function fetchSpyCalls(id) {
   const response = await fetch(`http://localhost:2600/getSpy?spyId=${id}`);
   const text = await response.text();
   if (text) {
@@ -12,8 +13,8 @@ class SpyRequest {
   constructor(id) {
     this.id = id;
   }
-  async value() {
-    return await checkSpy(this.id);
+  async calls() {
+    return await fetchSpyCalls(this.id);
   }
 }
 
@@ -31,7 +32,7 @@ Object.defineProperty(global, 'expect', {
     originalExpect = value;
     expect = (...value) => {
       if (value[0] instanceof SpyRequest) {
-        return spyHandlers(spy);
+        return spyHandlers(value[0]);
       } else {
         return originalExpect(...value);
       }
@@ -46,13 +47,48 @@ Object.defineProperty(global, 'expect', {
 function spyHandlers(spy) {
   return {
     async toHaveBeenCalled() {
-      const spyValue = await spy.value();
-      if (spyValue === undefined) {
+      const calls = await spy.calls();
+      if (calls === undefined) {
         throw Error(`Expected spy with id "${spy.id}" to have been called, but it was not called`);
       }
     },
-    async toHaveBeenCalledWith() {
-      const spyValue = await spy.value();
+    async notToHaveBeenCalled() {
+      const calls = await spy.calls();
+      if (calls !== undefined) {
+        throw Error(`Expected spy with id "${spy.id}" not to have been called, but it was called`);
+      }
+    },
+    async toHaveBeenCalledWith(...args) {
+      const calls = await spy.calls();
+      let foundCallWithMatchedArgs;
+      if (calls) {
+        calls.forEach((call, index) => {
+          try {
+            const parsedCall = JSON.parse(call);
+            if (isEqual(parsedCall, args)) {
+              foundCallWithMatchedArgs = true;
+            }
+          } catch (e) {
+          }
+        });
+        if (!foundCallWithMatchedArgs) {
+          throw Error(`Expected spy with id "${spy.id}" to have been called with:\n\n ${args}\n But it was called with:\n${calls}`);
+        }
+      }
+    },
+
+    async toHaveBeenNthCalledWith(callNum, ...args) {
+      const calls = await spy.calls();
+      if (calls) {
+        try{
+          const parsedCall = JSON.parse(calls[callNum]);
+          if (!isEqual(parsedCall, args)) {
+            throw Error(`Expected spy with id "${spy.id}" call number ${callNum} to be:\n\n ${args}\n But it was:\n${parsedCall}`);
+          }
+        } catch(e) {
+          
+        }
+      }
     }
   }
 }
