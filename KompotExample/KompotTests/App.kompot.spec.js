@@ -16,4 +16,28 @@ describe('App', () => {
     await expect(element(by.id('jokeClass'))).toBeVisible();
     await expect(element(by.text('a foo walks into a bar'))).toBeVisible();
   });
+  describe('Spies', () => {
+    it('toHaveBeenCalled', async () => {
+      await component.withMocks([Mocks.spyDoSomething]).mount();
+      await element(by.id('doSomething')).tap();
+      await expect(spy('doSomething')).toHaveBeenCalled();
+    });
+    it('notToHaveBeenCalled', async () => {
+      await component.withMocks([Mocks.spyDoSomething]).mount();
+      await expect(spy('doSomething')).notToHaveBeenCalled();
+      await expect(spy('doSomething2')).notToHaveBeenCalled();
+    });
+    it('toHaveBeenCalledWith', async () => {
+      await component.withMocks([Mocks.spyDoSomething]).mount();
+      await element(by.id('doSomething')).tap();
+      await expect(spy('doSomething')).toHaveBeenCalledWith('a', 10, {test: 'bla'});
+    });
+
+    it('toHaveBeenNthCalledWith', async () => {
+      await component.withMocks([Mocks.spyDoSomething]).mount();
+      await element(by.id('doSomething')).tap();
+      await element(by.id('doSomethingAgain')).tap();
+      await expect(spy('doSomething')).toHaveBeenNthCalledWith(1, 'again2');
+    });
+  });
 });

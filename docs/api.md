@@ -61,19 +61,31 @@ module.exports = {
 Then, you should mount your component with mocks:
 
 ```js
-it('should do something', () => {
-  component.withMocks(['SOME_MOCK']).mount();
+const Mocks = require('./mocks');
+
+it('should do something', async () => {
+  await component.withMocks([Mocks.mockLameJoke]).mount();
 });
 ```
 
 ## Triggers
 Sometimes you need to trigger functions during the tests, for example, if your react component has some method called `scrollTo` and you want to test it, you can do it using triggers. Triggers should be defined just like mocks. If you need to interact with your component, you can use the `savedComponentRef` global.
 
+Inside your mock file add:
 ```js
-component.kompotInjector({
+module.exports = {
   someTrigger: () => {
     global.savedComponentRef.scrollTo('bottom');
   }
+}
+```
+
+And use the trigger in your spec file like this:
+```js
+const Mocks = require('./mocks');
+it('should do something', async () => {
+  await component.withTriggers([Mocks.someTrigger]).mount();
+  await element(by.id('someTrigger')).tap();
 });
 ```
 
@@ -109,3 +121,41 @@ import configureStore from './store/configureStore';
 const store = configureStore({});
 global.kompot.registerProvider({ component: Provider, props: { store } });
 ```
+
+### spy(spyId: string)
+
+See the spies section below. 
+
+## Spies
+
+If you want to spy on a function to see if it has been called, you can mock it using a kompot spy.
+First, create a mock function that will mock your function to use the spy:
+
+```js
+module.exports = {
+  mockSomeFunctionToUseSpy: () => {
+    const Module = require('./MyModule');
+    Module.someFunction = kompot.spy('someFunction'); //we give the spy a special id that we will use in the spec
+  }
+}
+```
+
+Then, check the spy in your spec file:
+```js
+const Mocks = require('./mocks');
+
+it('should do something', async () => {
+  await component.withMocks([Mocks.mockSomeFunctionToUseSpy]).mount();
+  await expect(spy('someFunction')).toHaveBeenCalled();
+});
+```
+
+### The spy matchers
+####  toHaveBeenCalled()
+Check that the function has been called
+####  notToHaveBeenCalled()
+Check that the function has not been called
+####  toHaveBeenCalledWith(arg1,arg2, ...)
+Check that the function has been called with specific args
+####  toHaveBeenNthCalledWith(callNum, arg1, arg2, ...)
+Check the nth call of the function

@@ -1,7 +1,8 @@
+require('./initKompotTestSuite');
 module.exports = {
   kompotRequire: function (pathToComponent) {
-    const path = require('path');
     const fetch = require('node-fetch');
+    const path = require('path');
     const fileName = path.basename(pathToComponent, '.js');
     const {serialize} = require('./Serialize');
     let globals = [];

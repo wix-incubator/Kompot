@@ -2,6 +2,7 @@ import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView 
 import React from 'react';
 import { deSerialize } from './Serialize';
 
+const originalFetch = fetch;
 const providers = [];
 
 class Container extends React.Component {
@@ -77,6 +78,7 @@ global.savedComponentRef = null;
 global.triggers = {};
 global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 global.kompot = {
+  spy: kompotSpy, 
   useMocks: global.useMocks,
   savedComponentRef: global.savedComponentRef,
   componentProps: global.componentProps,
@@ -91,7 +93,7 @@ function run() {
 
 async function fetchAndSetGlobals() {
   try {
-    const response = await fetch('http://localhost:2600/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json" } });
     const globals = await response.json();
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
@@ -101,7 +103,7 @@ async function fetchAndSetGlobals() {
 
 async function fetchAndSetTriggers() {
   try {
-    const response = await fetch('http://localhost:2600/getTriggers', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getTriggers', { method: 'GET', headers: { "Content-Type": "application/json" } });
     const triggersObj = await response.json();
     Object.keys(triggersObj).forEach(key => global.triggers[key] = true);
   } catch (e) {
@@ -111,7 +113,7 @@ async function fetchAndSetTriggers() {
 
 async function fetchCurrentComponent() {
   try {
-    const response = await fetch('http://localhost:2600/getCurrentComponent', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getCurrentComponent', { method: 'GET', headers: { "Content-Type": "application/json" } });
     const currentComponent = await response.text();
     global[currentComponent] = true;
   } catch (e) {
@@ -121,11 +123,19 @@ async function fetchCurrentComponent() {
 
 async function fetchAndSetProps() {
   try {
-    const response = await fetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "text/plain" } });
+    const response = await originalFetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "text/plain" } });
     const stringProps = await response.text();
     global.componentProps = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
     console.log('Cannot fetch props: ', e.message);
+  }
+}
+
+async function notifySpyTriggered(body) {
+  try {
+    await originalFetch('http://localhost:2600/notifySpy', { method: 'POST', body, headers: { "Content-Type": "application/json" }});
+  } catch (e) {
+    console.log('Cannot set spy: ', e.message);
   }
 }
 
@@ -141,4 +151,11 @@ function kompotCodeInjector(objectToInject) {
       global.triggers[key] = injectorObject[key];
     }
   });
+}
+
+function kompotSpy(id, stringifyArgs = JSON.stringify) {
+  return (...args) => {
+    let stringArgs = stringifyArgs(args);
+    notifySpyTriggered(JSON.stringify({id, stringArgs}));
+  }
 }
