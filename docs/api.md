@@ -122,9 +122,24 @@ const store = configureStore({});
 global.kompot.registerProvider({ component: Provider, props: { store } });
 ```
 
-### spy(spyId: string)
+### spy(spyId: string, getReturnValue?: func ) : kompotSpy
+Returns a kompot spy.
+`spyId` should be a unique id that will identify the spy later in the `expect` call. 
+`getReturnValue` is an optional function to use when you want to mock a return value based on the args.
 
-See the spies section below. 
+For more information see the spies section below. 
+
+### spyOn(target: object, methodName: string, spyId: string)
+Attach a spy to a specific method on the target.
+`target`: any object.
+`methodName`: any method on the target.
+`spyId` should be a unique id that will identify the spy later in the `expect` call. 
+``
+
+Usage:
+```js
+global.kompot.spyOn(global, 'fetch', 'global.fetch');
+```
 
 ## Spies
 

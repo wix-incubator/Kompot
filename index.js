@@ -78,7 +78,8 @@ global.savedComponentRef = null;
 global.triggers = {};
 global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 global.kompot = {
-  spy: kompotSpy, 
+  spy: kompotSpy,
+  spyOn,
   useMocks: global.useMocks,
   savedComponentRef: global.savedComponentRef,
   componentProps: global.componentProps,
@@ -153,9 +154,22 @@ function kompotCodeInjector(objectToInject) {
   });
 }
 
-function kompotSpy(id, stringifyArgs = JSON.stringify) {
+function kompotSpy(id, getReturnValue, stringifyArgs = JSON.stringify) {
   return (...args) => {
     let stringArgs = stringifyArgs(args);
     notifySpyTriggered(JSON.stringify({id, stringArgs}));
+    if(getReturnValue) {
+      return getReturnValue(...args);
+    }
+  }
+}
+
+function spyOn(object, methodName, spyId, stringifyArgs) {
+  const originalFunc = object[methodName];
+  const spy = kompotSpy(spyId, undefined, stringifyArgs);
+
+  object[methodName] = (...args) => {
+    spy(...args);
+    return originalFunc(...args);
   }
 }
