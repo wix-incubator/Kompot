@@ -134,7 +134,7 @@ Attach a spy to a specific method on the target.
 `target`: any object.
 `methodName`: any method on the target.
 `spyId` should be a unique id that will identify the spy later in the `expect` call. 
-``
+
 
 Usage:
 ```js
