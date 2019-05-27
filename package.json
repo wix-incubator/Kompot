@@ -1,6 +1,6 @@
 {
   "name": "kompot",
-  "version": "3.3.2",
+  "version": "3.3.3",
   "main": "src/kompot.js",
   "bin": {
     "kompot": "./src/scripts/kompot-cli.js"
@@ -10,7 +10,7 @@
     "test": "jest",
     "mocha": "mocha -r ./temp/init.js --compilers js:babel-core/register -- temp/*.test.js"
   },
-  "files": ["src"],
+  "files": ["src", "index.android.js", "index.ios.js", "metro.config.js"],
   "dependencies": {
     "argparse": "^1.0.10",
     "babel-loader": "^7.1.4",

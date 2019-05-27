@@ -68,8 +68,8 @@ if (args.app_type && args.init_root) {
 if(args.entry_point) {
   const fileName = Path.basename(args.entry_point);
   const dirName = Path.dirname(args.entry_point);
-  const kompotIndex = Path.resolve(`./node_modules/kompot/index.js`);
-  execSync(`mkdir -p ./node_modules/kompot/${dirName}`, (e, stdout, stderr) => {
+  const kompotIndex = Path.resolve(`${__dirname}/../index.js`);
+  execSync(`mkdir -p ${__dirname}/../../${dirName}`, (e, stdout, stderr) => {
     if (e instanceof Error) {
       console.error(e);
       throw e;
@@ -77,7 +77,7 @@ if(args.entry_point) {
     console.log('stdout ', stdout);
     console.log('stderr ', stderr);
   });
-    fs.writeFile(`./node_modules/kompot/${dirName}/${fileName}`, `require('${kompotIndex}');`, function(err) {
+    fs.writeFile(`${__dirname}/../../${dirName}/${fileName}`, `require('${kompotIndex}');`, function(err) {
       if(err) {
           return console.log(err);
       }
@@ -86,7 +86,7 @@ if(args.entry_point) {
 
 const build = command === COMMANDS.BUILD;
 if (args.build || build) {
-  const command = [`./node_modules/kompot/scripts/generateIndex.js`, '-n', args.build || args.name];
+  const command = [`${__dirname}/generateIndex.js`, '-n', args.build || args.name];
   if (args.app_type) {
     command.push('-t');
     command.push(args.app_type);
@@ -119,9 +119,9 @@ if (args.kill || start) {
 }
 
 if (args.start || start) {
-  spawn('node', [`./node_modules/kompot/scripts/start.js`], { stdio: 'inherit' });
+  spawn('node', [`${__dirname}/start.js`], { stdio: 'inherit' });
 }
 
 if (args.run_server || start) {
-  spawn('node', [`./node_modules/kompot/server/server.js`], { stdio: 'inherit' });
+  spawn('node', [`${__dirname}/../server/server.js`], { stdio: 'inherit' });
 }
