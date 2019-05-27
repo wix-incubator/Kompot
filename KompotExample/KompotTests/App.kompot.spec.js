@@ -16,6 +16,12 @@ describe('App', () => {
     await expect(element(by.id('jokeClass'))).toBeVisible();
     await expect(element(by.text('a foo walks into a bar'))).toBeVisible();
   });
+
+  it('should allow mocking fetch url', async() => {
+    await component.withMocks([Mocks.mockFetchUrl]).mount();
+    await expect(element(by.id('chuckNorisJoke'))).toHaveText('"success mocking url!"');
+  });
+
   describe('Spies', () => {
     it('toHaveBeenCalled', async () => {
       await component.withMocks([Mocks.spyDoSomething]).mount();
@@ -37,7 +43,12 @@ describe('App', () => {
       await component.withMocks([Mocks.spyDoSomething]).mount();
       await element(by.id('doSomething')).tap();
       await element(by.id('doSomethingAgain')).tap();
-      await expect(spy('doSomething')).toHaveBeenNthCalledWith(1, 'again2');
+      await expect(spy('doSomething')).toHaveBeenNthCalledWith(1, 'again');
+    });
+
+    it('should allow spying on a method', async() => {
+      await component.withMocks([Mocks.mockJokeService, Mocks.spyOnLameJoke]).mount();
+      await expect(spy('JokeService.fetchJoke')).toHaveBeenCalled();
     });
   });
 });

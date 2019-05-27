@@ -23,7 +23,7 @@
     "metro-react-native-babel-preset": "0.54.1",
     "react-test-renderer": "16.8.3",
     "detox": "^8.1.1",
-    "kompot": "wix/kompot#added-spies",
+    "kompot": "wix/kompot#move-to-src",
     "mocha": "^5.2.0"
   },
   "jest": {
@@ -35,7 +35,7 @@
         "binaryPath": "ios/build/Build/Products/Debug-iphonesimulator/KompotExample.app",
         "build": "xcodebuild -project /Users/niryo/git/Kompot/KompotExample/ios/KompotExample.xcodeproj -scheme KompotExample -configuration Debug -sdk iphonesimulator -derivedDataPath ios/build/",
         "type": "ios.simulator",
-        "name": "iPhone 8"
+        "name": "iPhone X"
       }
     },
     "test-runner": "mocha"

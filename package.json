@@ -1,26 +1,16 @@
 {
   "name": "kompot",
   "version": "3.3.0",
-  "main": "kompot.js",
+  "main": "src/kompot.js",
   "bin": {
-    "kompot": "./scripts/kompot-cli.js"
+    "kompot": ".src/scripts/kompot-cli.js"
   },
   "scripts": {
     "start": "react-native start --root ./app",
     "test": "jest",
     "mocha": "mocha -r ./temp/init.js --compilers js:babel-core/register -- temp/*.test.js"
   },
-  "files": [
-    "metro.config.js",
-    "server",
-    "scripts",
-    "index.js",
-    "kompot.js",
-    "rootComponentTemplates.js",
-    "index.ios.js",
-    "Serialize.js",
-    "initKompotTestSuite.js"
-  ],
+  "files": ["src"],
   "dependencies": {
     "argparse": "^1.0.10",
     "babel-loader": "^7.1.4",
