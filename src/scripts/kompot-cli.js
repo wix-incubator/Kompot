@@ -69,7 +69,7 @@ if(args.entry_point) {
   const fileName = Path.basename(args.entry_point);
   const dirName = Path.dirname(args.entry_point);
   const kompotIndex = Path.resolve(`${__dirname}/../index.js`);
-  execSync(`mkdir -p ${__dirname}/../../${dirName}`, (e, stdout, stderr) => {
+  execSync(`mkdir -p ${__dirname}/../${dirName}`, (e, stdout, stderr) => {
     if (e instanceof Error) {
       console.error(e);
       throw e;
@@ -77,7 +77,7 @@ if(args.entry_point) {
     console.log('stdout ', stdout);
     console.log('stderr ', stderr);
   });
-    fs.writeFile(`${__dirname}/../../${dirName}/${fileName}`, `require('${kompotIndex}');`, function(err) {
+    fs.writeFile(`${__dirname}/../${dirName}/${fileName}`, `require('${kompotIndex}');`, function(err) {
       if(err) {
           return console.log(err);
       }
