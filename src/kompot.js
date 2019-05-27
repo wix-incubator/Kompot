@@ -27,9 +27,6 @@ module.exports = {
           Object.assign(props, propsToAdd);
           return this;
         },
-        kompotInjector: function(){
-          return this;
-        },
         mount : async function(){
           const requests = [];
           const globalsQuery = getArrayQuery(globals);

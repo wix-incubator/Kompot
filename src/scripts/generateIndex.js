@@ -9,7 +9,6 @@ const traverse = require('babel-traverse').default;
 
 const KOMPOT_FILE_EXTENTION = '.kompot.spec.js';
 const OUTPUT_PATH = `${__dirname}/../generatedRequireKompotSpecs.js`;
-const WATCHMAN_TRIGGER_PATH = `${__dirname}/watchmanTrigger.js`
 const parser = new ArgumentParser();
 
 parser.addArgument(['-n', '--name'], {
@@ -42,7 +41,7 @@ const requireStatements = filePathList
     const dataFromFile = extractDataFromFile(filePath);
     const fileName = Path.basename(dataFromFile.requirePath);
     return `if(global['${fileName}']){
-      global.kompotCodeInjector(${dataFromFile.injectObject || '{}'});
+      global.kompotCodeInjector();
       currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
       if(!currentComponent) {
         throw new Error('Component is undefined: Please check your kompotRequire statement in ${filePath}');
@@ -84,8 +83,6 @@ function extractDataFromFile(filePath) {
   const ast = babylon.parse(content, {sourceType: 'module'});
   let kompotRequireAbsolutePath;
   let kompotRequireMember;
-  let injectObject;
-  const requiresStrings = [];
   traverse(ast, {
     CallExpression: ({node}) => {
       const methodName = _.get(node, 'callee.property.name');
@@ -93,11 +90,6 @@ function extractDataFromFile(filePath) {
       if(methodName === 'kompotRequire') {
         const kompotRequireRelativePath = node.arguments[0].extra.rawValue;
         kompotRequireAbsolutePath = Path.resolve(Path.dirname(filePath),kompotRequireRelativePath);
-      } else if(methodName === 'kompotInjector') {
-        injectObject = content.substring(node.arguments[0].start, node.arguments[0].end);
-      } 
-      if(calleeName === 'require') {
-        requiresStrings.push(content.substring(node.arguments[0].start +1, node.arguments[0].end -1))
       }
     },
     MemberExpression: ({node}) => {
@@ -107,26 +99,13 @@ function extractDataFromFile(filePath) {
       }
     }
   });
-  if(injectObject) {
-    injectObject = resolveAllPaths(injectObject,requiresStrings,Path.dirname(filePath))
-  }
+
   if(kompotRequireAbsolutePath){
     console.log('Found kompot require statement:', kompotRequireAbsolutePath, ' in file: ', filePath);
-    return {requirePath: kompotRequireAbsolutePath, requireMember: kompotRequireMember, injectObject};
+    return {requirePath: kompotRequireAbsolutePath, requireMember: kompotRequireMember};
   } else {
     throw new Error('Cannot find kompot require statement')
   }
-}
-
-function resolveAllPaths(injectorObj, paths, basePath){
-  let resolvedInjector = injectorObj;
-  paths.forEach((path) => {
-    if(Path.basename(path) !== path){
-      const resolvedPath = Path.resolve(basePath,path);
-      resolvedInjector = resolvedInjector.split(`require('${path}')`).join(`require('${resolvedPath}')`);
-    }
-  })
-  return resolvedInjector;
 }
 
 function getAllFilesWithKompotExtension() {

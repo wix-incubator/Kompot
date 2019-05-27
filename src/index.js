@@ -142,9 +142,9 @@ async function notifySpyTriggered(body) {
   }
 }
 
-function kompotCodeInjector(objectToInject) {
+function kompotCodeInjector() {
   const mocks = requireGlobalMocks.map(getMocks => getMocks());
-  const injectorObject = Object.assign({}, ...mocks, objectToInject);
+  const injectorObject = Object.assign({}, ...mocks);
   injectorObject.default && injectorObject.default();
   Object.keys(injectorObject).forEach(key => {
     if (key !== 'default' && global[key]) {
