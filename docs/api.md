@@ -122,6 +122,19 @@ const store = configureStore({});
 global.kompot.registerProvider({ component: Provider, props: { store } });
 ```
 
+### mockFetchUrl(url: string, getResponse: func )
+An helper function to easily mock fetch url request.
+`url` url to mock.  
+`getResponse` a function that will be used to get the response for the mocked url.
+
+Usage example:
+
+```js
+global.kompot.mockFetchUrl('https://hello.com/world', (url, options) => {
+  return new Response('yey!');
+});
+```
+
 ### spy(spyId: string, getReturnValue?: func ) : kompotSpy
 Returns a kompot spy.
 `spyId` should be a unique id that will identify the spy later in the `expect` call. 

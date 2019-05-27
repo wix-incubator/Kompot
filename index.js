@@ -69,6 +69,7 @@ global.onComponentToTestReady = function (listener) {
 global.setComponentToTest = function (ComponentToTest) {
   onComponentToTestReadyListener(ComponentToTest, global.componentProps, Object.keys(global.triggers));
 }
+global.fetch = mockedFetch;
 global.KompotApp = global.setComponentToTest;
 global.React = React;
 global.ReactNative = ReactNative;
@@ -78,6 +79,7 @@ global.savedComponentRef = null;
 global.triggers = {};
 global.useMocks = getMocks => requireGlobalMocks.push(getMocks);
 global.kompot = {
+  mockFetchUrl,
   spy: kompotSpy,
   spyOn,
   useMocks: global.useMocks,
@@ -172,4 +174,22 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
     spy(...args);
     return originalFunc(...args);
   }
+}
+
+mockedUrls = {};
+const fetchSpy = kompotSpy('fetch');
+
+async function mockedFetch(url, options){
+  
+  if (mockedUrls[url]) {
+    const handler = mockedUrls[url];
+    fetchSpy(url,options);
+    return handler(url, options);
+  } else {
+    return originalFetch(url, options);
+  }
+}
+
+function mockFetchUrl(url, handler) {
+  mockedUrls[url] = handler;
 }
