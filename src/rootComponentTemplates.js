@@ -14,12 +14,7 @@ module.exports ={
             component: {
               name: '${appName}'
             }
-          }],
-          options: {
-            topBar: {
-              visible: false
-            }
-          }
+          }]
         }
       }
     });

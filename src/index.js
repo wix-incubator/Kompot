@@ -37,7 +37,7 @@ class Container extends React.Component {
   renderTestedComponentWithProviders() {
     const props = this.state.props;
     let TestedComponent = this.state.TestedComponent;
-    TestedComponent = <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />;
+    TestedComponent = <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId={this.props.componentId} {...props} />;
     providers.forEach(provider => {
       TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
     });
