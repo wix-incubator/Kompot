@@ -1,11 +1,9 @@
 import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView } from 'react-native';
 import React from 'react';
 import { deSerialize } from './Serialize';
-import {Navigation} from 'react-native-navigation';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
-Navigation.registerComponent('TestedComponent', () => Container); //hack for navigation cache bug (red screen on refresh)
 
 const getWrappedComponent = (Component, props) => {
   let TestedComponent = <Component ref={(ref) => global.savedComponentRef = ref} {...props} />;
@@ -16,6 +14,7 @@ const getWrappedComponent = (Component, props) => {
 }
 
 function registerTestedComponentAsNewRoot(Component){
+  const {Navigation} = require('react-native-navigation');
   Navigation.registerComponent('TestedComponent', () => Component);
   Navigation.setRoot({
     root: {
