@@ -5,6 +5,7 @@ module.exports ={
   `,
   getNavigationTemplate: (appName) => `
   import {Navigation} from 'react-native-navigation';
+  global.isReactNativeNavigationProject = true;
   Navigation.registerComponent('${appName}', () => global.KompotContainer);
   Navigation.events().registerAppLaunchedListener(() => {
     Navigation.setRoot({
