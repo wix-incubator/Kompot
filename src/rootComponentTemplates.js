@@ -13,7 +13,7 @@ module.exports ={
         stack: {
           children: [{
             component: {
-              id: 'kompotComponent',
+              id: name,
               name
             }
           }]
