@@ -1,9 +1,17 @@
 import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView } from 'react-native';
 import React from 'react';
 import { deSerialize } from './Serialize';
-
+import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
+
+const getWrappedComponent = (Component, props) => {
+  let TestedComponent = <Component ref={(ref) => global.savedComponentRef = ref} {...props} />;
+  providers.forEach(provider => {
+    TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
+  });
+  return TestedComponent;
+}
 
 class Container extends React.Component {
   constructor() {
@@ -15,7 +23,17 @@ class Container extends React.Component {
     }
   }
   componentDidMount() {
-    global.onComponentToTestReady((TestedComponent, props, triggers) => this.setState({ TestedComponent, props, triggers }));
+    global.onComponentToTestReady((TestedComponent, props, triggers) => {
+      if(global.isReactNativeNavigationProject) {
+        const Wrapper = (wrapperProps) => {
+          return getWrappedComponent(TestedComponent,{...wrapperProps, ...props});
+        }
+        hoistNonReactStatics(Wrapper, TestedComponent);
+        global.registerComponentAsRoot('TestedComponent' ,Wrapper);
+      } else {
+        this.setState({ TestedComponent, props, triggers });
+      }
+    });
     run();
   }
   renderLoader() {
@@ -34,15 +52,6 @@ class Container extends React.Component {
     global.triggers[trigger] && global.triggers[trigger]();
   }
 
-  renderTestedComponentWithProviders() {
-    const props = this.state.props;
-    let TestedComponent = this.state.TestedComponent;
-    TestedComponent = <TestedComponent ref={(ref) => global.savedComponentRef = ref} componentId="kompotComponent" {...props} />;
-    providers.forEach(provider => {
-      TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
-    });
-    return TestedComponent;
-  }
 
   renderComponent() {
     const TestedComponent = this.state.TestedComponent;
@@ -51,7 +60,7 @@ class Container extends React.Component {
         <SafeAreaView style={{ display: 'flex', flexDirection: 'row' }}>
           {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="." />)}
         </SafeAreaView>
-        {this.renderTestedComponentWithProviders()}
+        {getWrappedComponent(this.state.TestedComponent, this.state.props)}
       </View>);
   }
 
@@ -156,9 +165,9 @@ function kompotCodeInjector() {
   });
 }
 
-function kompotSpy(id, getReturnValue, stringifyArgs = JSON.stringify) {
+function kompotSpy(id, getReturnValue, stringifyArgs) {
   return (...args) => {
-    let stringArgs = stringifyArgs(args);
+    let stringArgs = stringifyArgs && stringifyArgs(...args) || JSON.stringify(args);
     notifySpyTriggered(JSON.stringify({id, stringArgs}));
     if(getReturnValue) {
       return getReturnValue(...args);
@@ -175,7 +184,6 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
     return originalFunc(...args);
   }
 }
-
 mockedUrls = {};
 const fetchSpy = kompotSpy('fetch');
 
