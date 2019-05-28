@@ -6,20 +6,23 @@ module.exports ={
   getNavigationTemplate: (appName) => `
   import {Navigation} from 'react-native-navigation';
   global.isReactNativeNavigationProject = true;
-  Navigation.registerComponent('${appName}', () => global.KompotContainer);
-  Navigation.events().registerAppLaunchedListener(() => {
+  global.registerComponentAsRoot = (name, Component) => {
+    Navigation.registerComponent(name, () => Component);
     Navigation.setRoot({
       root: {
         stack: {
           children: [{
             component: {
-              name: '${appName}'
+              id: 'kompotComponent',
+              name
             }
           }]
         }
       }
     });
-  });
+  }
+
+  Navigation.events().registerAppLaunchedListener(() => global.registerComponentAsRoot('${appName}', global.KompotContainer));
   `
 }
 

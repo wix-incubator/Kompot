@@ -13,23 +13,6 @@ const getWrappedComponent = (Component, props) => {
   return TestedComponent;
 }
 
-function registerTestedComponentAsNewRoot(Component){
-  const {Navigation} = require('react-native-navigation');
-  Navigation.registerComponent('TestedComponent', () => Component);
-  Navigation.setRoot({
-    root: {
-      stack: {
-        children: [{
-          component: {
-            id: 'kompotComponent',
-            name: 'TestedComponent'
-          }
-        }]
-      }
-    }
-  });
-}
-
 class Container extends React.Component {
   constructor() {
     super();
@@ -46,7 +29,7 @@ class Container extends React.Component {
           return getWrappedComponent(TestedComponent,{...wrapperProps, ...props});
         }
         hoistNonReactStatics(Wrapper, TestedComponent);
-        registerTestedComponentAsNewRoot(Wrapper);
+        global.registerComponentAsRoot('TestedComponent' ,Wrapper);
       } else {
         this.setState({ TestedComponent, props, triggers });
       }
