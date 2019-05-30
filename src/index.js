@@ -1,12 +1,33 @@
-import ReactNative, { ActivityIndicator, View, Dimensions, Button, SafeAreaView } from 'react-native';
+import ReactNative, {ActivityIndicator, View, Dimensions, Button, SafeAreaView, TouchableOpacity} from 'react-native';
 import React from 'react';
-import { deSerialize } from './Serialize';
+import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
 
-const getWrappedComponent = (Component, props) => {
-  let TestedComponent = <Component ref={(ref) => global.savedComponentRef = ref} {...props} />;
+const renderTriggers = (triggers) => {
+  const onTriggerPressed = (trigger) =>  global.triggers[trigger] && global.triggers[trigger]();
+  return (
+    <View style={{position: 'absolute', display: 'flex'}}>
+    {triggers.map(trigger => {
+      return (
+        <TouchableOpacity
+          style={{display: 'flex', zIndex: 9999, top: Dimensions.get('window').height / 2, width: 4, height: 1, backgroundColor: 'red'}}
+          key={trigger}
+          testID={trigger}
+          onPress={() => onTriggerPressed(trigger)} />
+      );
+    })}
+  </View>
+  );
+}
+
+const getWrappedComponent = (Component, props, triggers) => {
+  let TestedComponent = (
+    <View>
+      {renderTriggers(triggers)}
+      <Component ref={(ref) => global.savedComponentRef = ref} {...props} />
+    </View>);
   providers.forEach(provider => {
     TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
   });
@@ -17,21 +38,19 @@ class Container extends React.Component {
   constructor() {
     super();
     this.state = {
-      TestedComponent: undefined,
-      props: undefined,
-      triggers: []
+      TestedComponent: undefined
     }
   }
   componentDidMount() {
     global.onComponentToTestReady((TestedComponent, props, triggers) => {
-      if(global.isReactNativeNavigationProject) {
+      if (global.isReactNativeNavigationProject) {
         const Wrapper = (wrapperProps) => {
-          return getWrappedComponent(TestedComponent,{...wrapperProps, ...props});
+          return getWrappedComponent(TestedComponent, {...wrapperProps, ...props}, triggers);
         }
         hoistNonReactStatics(Wrapper, TestedComponent);
         global.registerComponentAsRoot('kompotComponent' ,Wrapper);
       } else {
-        this.setState({ TestedComponent, props, triggers });
+        this.setState({TestedComponent: getWrappedComponent(TestedComponent,props,triggers)});
       }
     });
     run();
@@ -48,19 +67,11 @@ class Container extends React.Component {
         <ActivityIndicator size="large" color="black" />
       </View>);
   }
-  onTriggerPressed(trigger) {
-    global.triggers[trigger] && global.triggers[trigger]();
-  }
-
-
+  
   renderComponent() {
-    const TestedComponent = this.state.TestedComponent;
     return (
-      <View style={{ height: Dimensions.get('window').height }}>
-        <SafeAreaView style={{ display: 'flex', flexDirection: 'row' }}>
-          {this.state.triggers.map(trigger => <Button key={trigger} testID={trigger} onPress={() => this.onTriggerPressed(trigger)} title="." />)}
-        </SafeAreaView>
-        {getWrappedComponent(this.state.TestedComponent, this.state.props)}
+      <View style={{height: Dimensions.get('window').height}}>
+        {this.state.TestedComponent}
       </View>);
   }
 
@@ -105,7 +116,7 @@ function run() {
 
 async function fetchAndSetGlobals() {
   try {
-    const response = await originalFetch('http://localhost:2600/getGlobals', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getGlobals', {method: 'GET', headers: {"Content-Type": "application/json"}});
     const globals = await response.json();
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
@@ -115,7 +126,7 @@ async function fetchAndSetGlobals() {
 
 async function fetchAndSetTriggers() {
   try {
-    const response = await originalFetch('http://localhost:2600/getTriggers', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getTriggers', {method: 'GET', headers: {"Content-Type": "application/json"}});
     const triggersObj = await response.json();
     Object.keys(triggersObj).forEach(key => global.triggers[key] = true);
   } catch (e) {
@@ -125,7 +136,7 @@ async function fetchAndSetTriggers() {
 
 async function fetchCurrentComponent() {
   try {
-    const response = await originalFetch('http://localhost:2600/getCurrentComponent', { method: 'GET', headers: { "Content-Type": "application/json" } });
+    const response = await originalFetch('http://localhost:2600/getCurrentComponent', {method: 'GET', headers: {"Content-Type": "application/json"}});
     const currentComponent = await response.text();
     global[currentComponent] = true;
   } catch (e) {
@@ -135,7 +146,7 @@ async function fetchCurrentComponent() {
 
 async function fetchAndSetProps() {
   try {
-    const response = await originalFetch('http://localhost:2600/getProps', { method: 'GET', headers: { "Content-Type": "text/plain" } });
+    const response = await originalFetch('http://localhost:2600/getProps', {method: 'GET', headers: {"Content-Type": "text/plain"}});
     const stringProps = await response.text();
     global.componentProps = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
@@ -145,7 +156,7 @@ async function fetchAndSetProps() {
 
 async function notifySpyTriggered(body) {
   try {
-    await originalFetch('http://localhost:2600/notifySpy', { method: 'POST', body, headers: { "Content-Type": "application/json" }});
+    await originalFetch('http://localhost:2600/notifySpy', {method: 'POST', body, headers: {"Content-Type": "application/json"}});
   } catch (e) {
     console.log('Cannot set spy: ', e.message);
   }
@@ -169,7 +180,7 @@ function kompotSpy(id, getReturnValue, stringifyArgs) {
   return (...args) => {
     let stringArgs = stringifyArgs && stringifyArgs(...args) || JSON.stringify(args);
     notifySpyTriggered(JSON.stringify({id, stringArgs}));
-    if(getReturnValue) {
+    if (getReturnValue) {
       return getReturnValue(...args);
     }
   }
@@ -187,11 +198,11 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
 mockedUrls = {};
 const fetchSpy = kompotSpy('fetch');
 
-async function mockedFetch(url, options){
-  
+async function mockedFetch(url, options) {
+
   if (mockedUrls[url]) {
     const handler = mockedUrls[url];
-    fetchSpy(url,options);
+    fetchSpy(url, options);
     return handler(url, options);
   } else {
     return originalFetch(url, options);
