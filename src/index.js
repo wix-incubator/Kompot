@@ -24,7 +24,7 @@ const renderTriggers = (triggers) => {
 
 const getWrappedComponent = (Component, props, triggers) => {
   let TestedComponent = (
-    <View>
+    <View style={{height: Dimensions.get('window').height}}>
       {renderTriggers(triggers)}
       <Component ref={(ref) => global.savedComponentRef = ref} {...props} />
     </View>);
