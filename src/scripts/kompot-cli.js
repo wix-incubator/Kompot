@@ -47,6 +47,11 @@ parser.addArgument(['-t', '--app-type'], {
   choices: ['react-native-navigation']
 });
 
+parser.addArgument(['--silent'], {
+  help: `No logs`,
+  action: 'storeTrue'
+});
+
 parser.addArgument(['-i', '--init-root'], {
   help: `A path to an initialization file, for custom initialization of the root component.`,
   metavar: 'filePath'
@@ -123,5 +128,9 @@ if (args.start || start) {
 }
 
 if (args.run_server || start) {
-  spawn('node', [`${__dirname}/../server/server.js`], { stdio: 'inherit' });
+  const command = [`${__dirname}/../server/server.js`];
+  if(args.silent) {
+    command.push('-s');
+  }
+  spawn('node', command, { stdio: 'inherit' });
 }

@@ -1,3 +1,11 @@
+const ArgumentParser = require('argparse').ArgumentParser;
+const parser = new ArgumentParser();
+parser.addArgument(['-s', '--silent'], {
+  help: `Suppress logs.`,
+  action: 'storeTrue',
+});
+const args = parser.parseArgs();
+
 const express = require('express');
 const bodyParser = require('body-parser')
 
@@ -9,7 +17,6 @@ let globals;
 let props;
 let triggers;
 let spies;
-
 function reset() {
   globals = {};
   triggers = {}
@@ -20,7 +27,7 @@ app.use( bodyParser.json() );
 app.get('/setCurrentComponent', (req, res) => {
   reset();
   currentComponent = req.query.componentName;
-  console.log('Setting current component to be', currentComponent);
+  log('Setting current component to be', currentComponent);
   res.send();
 })
 
@@ -30,34 +37,34 @@ app.get('/getCurrentComponent', (req, res) => {
 
 app.get('/setGlobals', (req, res) => {
   globals = req.query;
-  console.log('Setting globals', globals);
+  log('Setting globals', globals);
   res.send();
 })
 
 app.get('/getGlobals', (req, res) => {
-  console.log('Getting globals', globals);
+  log('Getting globals', globals);
   res.send(globals);
 })
 app.get('/setTriggers', (req, res) => {
   triggers = req.query;
-  console.log('Setting triggers', triggers);
+  log('Setting triggers', triggers);
   res.send();
 })
 
 app.get('/getTriggers', (req, res) => {
-  console.log('Getting triggers', triggers);
+  log('Getting triggers', triggers);
   res.send(triggers);
 })
 
 
 app.get('/setProps', (req, res) => {
   props = req.query.props;
-  console.log('Setting props', props);
+  log('Setting props', props);
   res.send();
 })
 
 app.post('/notifySpy', (req, res) => {
-  console.log('Setting spy', req.body);
+  log('Setting spy', req.body);
   const id = req.body.id;
   if(!spies[id]) {
     spies[id] = [];
@@ -67,12 +74,12 @@ app.post('/notifySpy', (req, res) => {
 })
 
 app.get('/getSpy', (req, res) => {
-  console.log('get spy:', req.query.spyId);
+  log('get spy:', req.query.spyId);
   res.send(spies[req.query.spyId]);
 })
 
 app.get('/getProps', (req, res) => {
-  console.log('get props:', props);
+  log('get props:', props);
   res.send(props);
 })
 
@@ -81,3 +88,9 @@ app.get('/', (req, res) => {
 })
 
 app.listen(2600, () => console.log(`Kompot server listening on port 2600`));
+
+function log(...params){
+  if(!args.silent) {
+    console.log(...params);
+  }
+}
