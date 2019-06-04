@@ -4,6 +4,7 @@ import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
+const mockedUrls = {};
 
 const renderTriggers = (triggers) => {
   const onTriggerPressed = (trigger) =>  global.triggers[trigger] && global.triggers[trigger]();
@@ -195,7 +196,6 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
     return originalFunc(...args);
   }
 }
-mockedUrls = {};
 const fetchSpy = kompotSpy('fetch');
 
 async function mockedFetch(url, options) {
