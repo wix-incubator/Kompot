@@ -5,6 +5,7 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
 const mockedUrls = {};
+let fetchedProps = {};
 
 const renderTriggers = (triggers) => {
   const onTriggerPressed = (trigger) =>  global.triggers[trigger] && global.triggers[trigger]();
@@ -83,13 +84,13 @@ class Container extends React.Component {
 
 let onComponentToTestReadyListener;
 let requireGlobalMocks = [];
-global.componentProps = {};
 global.onComponentToTestReady = function (listener) {
   onComponentToTestReadyListener = listener;
 }
 global.setComponentToTest = function (ComponentToTest) {
-  onComponentToTestReadyListener(ComponentToTest, global.componentProps, Object.keys(global.triggers));
+  onComponentToTestReadyListener(ComponentToTest, this.Object.assign(fetchedProps, global.kompot.componentProps), Object.keys(global.triggers));
 }
+
 global.fetch = mockedFetch;
 global.KompotApp = global.setComponentToTest;
 global.React = React;
@@ -149,7 +150,7 @@ async function fetchAndSetProps() {
   try {
     const response = await originalFetch('http://localhost:2600/getProps', {method: 'GET', headers: {"Content-Type": "text/plain"}});
     const stringProps = await response.text();
-    global.componentProps = deSerialize(decodeURIComponent(stringProps));
+    fetchedProps = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
     console.log('Cannot fetch props: ', e.message);
   }
