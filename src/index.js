@@ -49,7 +49,7 @@ class Container extends React.Component {
           return getWrappedComponent(TestedComponent, {...wrapperProps, ...props}, triggers);
         }
         hoistNonReactStatics(Wrapper, TestedComponent);
-        global.registerComponentAsRoot('kompotComponent' ,Wrapper);
+        global.registerComponentAsRoot('kompotComponent' , Wrapper, {...props});
       } else {
         this.setState({TestedComponent: getWrappedComponent(TestedComponent,props,triggers)});
       }

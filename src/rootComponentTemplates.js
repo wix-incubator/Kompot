@@ -6,7 +6,7 @@ module.exports ={
   getNavigationTemplate: (appName) => `
   import {Navigation} from 'react-native-navigation';
   global.isReactNativeNavigationProject = true;
-  global.registerComponentAsRoot = (name, Component) => {
+  global.registerComponentAsRoot = (name, Component, props) => {
     Navigation.registerComponent(name, () => Component);
     Navigation.setRoot({
       root: {
@@ -14,7 +14,8 @@ module.exports ={
           children: [{
             component: {
               id: name,
-              name
+              name,
+              passProps: props
             }
           }]
         }
