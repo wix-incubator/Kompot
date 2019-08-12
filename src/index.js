@@ -25,12 +25,12 @@ const renderTriggers = (triggers) => {
 
 const getWrappedComponent = (Component, props, triggers) => {
   let TestedComponent = (
-    <View style={{height: Dimensions.get('window').height}}>
+    <View style={{flexGrow: 1}}>
       {renderTriggers(triggers)}
       <Component ref={(ref) => global.savedComponentRef = ref} {...props} />
     </View>);
   providers.forEach(provider => {
-    TestedComponent = <provider.component {...provider.props}>{TestedComponent}</provider.component>;
+    TestedComponent = <SafeAreaView><provider.component {...provider.props}>{TestedComponent}</provider.component></SafeAreaView>;
   });
   return TestedComponent;
 }
