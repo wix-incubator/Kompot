@@ -2,6 +2,21 @@ import ReactNative, {ActivityIndicator, View, Dimensions, Button, SafeAreaView, 
 import React from 'react';
 import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+
+//========= Mock Object.defineProperty to always allow overriding =========
+const originalDefineProperty = Object.defineProperty;
+const originalDefineProperties = Object.defineProperties;
+Object.defineProperty = (obj, prop, desc) => {
+  return originalDefineProperty(obj, prop, {...desc, configurable: true});
+};
+Object.defineProperties = (obj, props) => {
+  Object.keys(props).forEach((key) => {
+    props[key].configurable = true;
+  });
+  return originalDefineProperties(obj, props);
+};
+//=========================================================================
+
 const originalFetch = fetch;
 const providers = [];
 const mockedUrls = {};
