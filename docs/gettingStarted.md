@@ -6,7 +6,20 @@
 #### 2. install Detox:
 Follow [Getting Started With Detox](https://github.com/wix/detox/blob/master/docs/Introduction.GettingStarted.md) and choose `mocha` as the test runner (`jest` doesn't work well yet).
 
-#### 3. create an example component:
+#### 4. create an example component:
+If you follow detox's instructions correctly, you should have an 'init.js' file with a 'beforeAll' function. In the 'beforeAll' function, you should add a call to 'kompot.init()':
+```js
+const detox = require('detox');
+const {init} = require('kompot');
+
+beforeAll(async () => {
+  await detox.init(config);
+  init(); //<== add this
+});
+
+``` 
+
+#### 5. create an example component:
 for example: `App.js`:
 
 ```js
@@ -20,7 +33,7 @@ export class App extends React.Component {
 }
 ```
 
-#### 4. add your first test:
+#### 6. add your first test:
 create a file called `FirstTest.kompot.spec.js`:
 
 ```js
@@ -35,7 +48,7 @@ describe('Our first test', () => {
 });
 ```
 
-#### 5. add the following scripts to your `package.json`:
+#### 7. add the following scripts to your `package.json`:
 
 ```json
 "scripts":{
@@ -46,5 +59,5 @@ describe('Our first test', () => {
 
 Replace `<your-app-name>` with the name of your app as you give to `AppRegistry.registerComponent()`, and replace `<your_configuration_name>` with your real configuration name as it appears in your package.json under `detox`.
 
-#### 6. run:
+#### 8. run:
 `npm run start-kompot && npm run test`
