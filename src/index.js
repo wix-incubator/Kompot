@@ -136,7 +136,7 @@ async function fetchAndSetGlobals() {
     const globals = await response.json();
     Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
-    console.log('Cannot fetch globals: ', e.message);
+    console.error('Cannot fetch globals: ', e.message);
   }
 }
 
@@ -146,7 +146,7 @@ async function fetchAndSetTriggers() {
     const triggersObj = await response.json();
     Object.keys(triggersObj).forEach(key => global.triggers[key] = true);
   } catch (e) {
-    console.log('Cannot fetch triggers: ', e.message);
+    console.error('Cannot fetch triggers: ', e.message);
   }
 }
 
@@ -156,7 +156,7 @@ async function fetchCurrentComponent() {
     const currentComponent = await response.text();
     global[currentComponent] = true;
   } catch (e) {
-    console.log('Cannot fetch currentComponent: ', e.message);
+    console.error('Cannot fetch currentComponent: ', e.message);
   }
 }
 
@@ -166,7 +166,7 @@ async function fetchAndSetProps() {
     const stringProps = await response.text();
     global.componentProps = deSerialize(decodeURIComponent(stringProps));
   } catch (e) {
-    console.log('Cannot fetch props: ', e.message);
+    console.error('Cannot fetch props: ', e.message);
   }
 }
 
@@ -179,17 +179,21 @@ async function notifySpyTriggered(body) {
 }
 
 function kompotCodeInjector() {
-  const mocks = requireGlobalMocks.map(getMocks => getMocks());
-  const injectorObject = Object.assign({}, ...mocks);
-  injectorObject.default && injectorObject.default();
-  Object.keys(injectorObject).forEach(key => {
-    if (key !== 'default' && global[key]) {
-      injectorObject[key]();
-    }
-    if (global.triggers[key]) {
-      global.triggers[key] = injectorObject[key];
-    }
-  });
+  try{
+    const mocks = requireGlobalMocks.map(getMocks => getMocks());
+    const injectorObject = Object.assign({}, ...mocks);
+    injectorObject.default && injectorObject.default();
+    Object.keys(injectorObject).forEach(key => {
+      if (key !== 'default' && global[key]) {
+        injectorObject[key]();
+      }
+      if (global.triggers[key]) {
+        global.triggers[key] = injectorObject[key];
+      }
+    });
+  } catch(e) {
+    console.error('Failed to apply mocks:', e);
+  }
 }
 
 function kompotSpy(id, getReturnValue, stringifyArgs) {

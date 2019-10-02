@@ -30,19 +30,20 @@ let originalExpect;
 Object.defineProperty(global, 'expect', {
   set(value) {
     originalExpect = value;
-    expect = (...value) => {
-      if (value[0] instanceof SpyRequest) {
-        return spyHandlers(value[0]);
-      } else {
-        return originalExpect(...value);
-      }
-    }
+    expect = kompotExpect;
   },
   get() {
     return expect;
   }
 });
 
+function kompotExpect(...value) {
+  if (value[0] instanceof SpyRequest) {
+    return spyHandlers(value[0]);
+  } else {
+    return originalExpect(...value);
+  }
+}
 
 function spyHandlers(spy) {
   return {
@@ -98,5 +99,12 @@ function spyHandlers(spy) {
         }
       }
     }
+  }
+}
+
+module.exports = {
+  initJest: () => {
+    originalExpect = global.expect;
+    global.expect = kompotExpect;
   }
 }
