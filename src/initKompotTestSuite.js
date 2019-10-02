@@ -22,20 +22,7 @@ global.spy = (id) => {
   return new SpyRequest(id);
 };
 
-
-let expect;
 let originalExpect;
-
-//swizzle expect:
-Object.defineProperty(global, 'expect', {
-  set(value) {
-    originalExpect = value;
-    expect = kompotExpect;
-  },
-  get() {
-    return expect;
-  }
-});
 
 function kompotExpect(...value) {
   if (value[0] instanceof SpyRequest) {
@@ -103,7 +90,7 @@ function spyHandlers(spy) {
 }
 
 module.exports = {
-  initJest: () => {
+  init: () => {
     originalExpect = global.expect;
     global.expect = kompotExpect;
   }

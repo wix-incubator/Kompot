@@ -1,6 +1,6 @@
-const {initJest} = require('./initKompotTestSuite');
+const {init} = require('./initKompotTestSuite');
 module.exports = {
-  initJest,
+  init,
   kompotRequire: function (pathToComponent) {
     const fetch = require('node-fetch');
     const path = require('path');
