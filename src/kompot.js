@@ -1,4 +1,6 @@
-const {init} = require('./initKompotTestSuite');
+const {init, setTestIdForSpies} = require('./initKompotTestSuite');
+const testKey = Math.floor(Math.random() * 1000000).toString();
+setTestIdForSpies(testKey);
 module.exports = {
   init,
   kompotRequire: function (pathToComponent) {
@@ -10,45 +12,47 @@ module.exports = {
     let triggers = [];
     let props = {};
 
-    //helpers:
-    const extractMockName = (mock => typeof mock === 'string' ? mock : mock.name);
-    const getArrayQuery = (globals) => globals.map(extractMockName).map(global => `${global}=true`).join('&');
-    const getPropsQuery = (props) => `props=${encodeURIComponent(serialize(props))}`;
-
-    const testComponentBuilder =  {
-        withMocks: function(globalsToAdd) {
-          globals = globals.concat(globalsToAdd);
-          return this;
-        },
-        withTriggers: function(triggeresToAdd) {
-          triggers = triggers.concat(triggeresToAdd);
-          return this;
-        },
-        withProps: function(propsToAdd) {
-          Object.assign(props, propsToAdd);
-          return this;
-        },
-        mount : async function(){
-          const requests = [];
-          const globalsQuery = getArrayQuery(globals);
-          const triggersQuery = getArrayQuery(triggers);
-          const propsQuery = getPropsQuery(props);
-          await fetch(`http://localhost:2600/setCurrentComponent?componentName=${fileName}`);
-          requests.push(fetch(`http://localhost:2600/setGlobals?${globalsQuery}`));
-          requests.push(fetch(`http://localhost:2600/setTriggers?${triggersQuery}`));
-          requests.push(fetch(`http://localhost:2600/setProps?${propsQuery}`));
-          await Promise.all(requests);
-          await device.reloadReactNative();
-          globals = [];
-          props = {};
+    const testComponentBuilder = {
+      withMocks: function (globalsToAdd) {
+        globals = globals.concat(globalsToAdd);
+        return this;
+      },
+      withTriggers: function (triggersToAdd) {
+        triggers = triggers.concat(triggersToAdd);
+        return this;
+      },
+      withProps: function (propsToAdd) {
+        Object.assign(props, propsToAdd);
+        return this;
+      },
+      mount: async function () {
+        const body = {
+          testKey,
+          componentName: fileName,
+          globals: globals.map((mock) => mock.name),
+          triggers,
+          props: serialize(props)
         }
-      };
+
+        await fetch(`http://localhost:2600/setComponentToTest`, {
+          method: 'POST',
+          headers: {"Content-Type": "application/json"},
+          body: JSON.stringify(body)
+        });
+        await device.reloadReactNative();
+        isTestKeyAlreadyInjectedToClient = true;
+        await element(by.id("testKeyInput")).replaceText(testKey);
+        await element(by.id("submitTestKey")).tap();
+        globals = [];
+        props = {};
+      }
+    };
 
     const handler = {
-      get: (target,prop) => {
-        if(testComponentBuilder.hasOwnProperty(prop)){
+      get: (target, prop) => {
+        if (testComponentBuilder.hasOwnProperty(prop)) {
           return testComponentBuilder[prop];
-        } else{
+        } else {
           return testComponentBuilder;
         }
       }

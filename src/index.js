@@ -1,4 +1,4 @@
-import ReactNative, {ActivityIndicator, View, Dimensions, Button, SafeAreaView, TouchableOpacity} from 'react-native';
+import ReactNative, {ActivityIndicator, View, Dimensions, Button, SafeAreaView, TouchableOpacity, TextInput} from 'react-native';
 import React from 'react';
 import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
@@ -6,21 +6,21 @@ import hoistNonReactStatics from 'hoist-non-react-statics';
 const originalFetch = fetch;
 const providers = [];
 const mockedUrls = {};
-
+let testKey;
 const renderTriggers = (triggers) => {
-  const onTriggerPressed = (trigger) =>  global.triggers[trigger] && global.triggers[trigger]();
+  const onTriggerPressed = (trigger) => global.triggers[trigger] && global.triggers[trigger]();
   return (
     <View style={{position: 'absolute', display: 'flex'}}>
-    {triggers.map(trigger => {
-      return (
-        <TouchableOpacity
-          style={{display: 'flex', zIndex: 9999, top: Dimensions.get('window').height / 2, width: 4, height: 1, backgroundColor: 'red'}}
-          key={trigger}
-          testID={trigger}
-          onPress={() => onTriggerPressed(trigger)} />
-      );
-    })}
-  </View>
+      {triggers.map(trigger => {
+        return (
+          <TouchableOpacity
+            style={{display: 'flex', zIndex: 9999, top: Dimensions.get('window').height / 2, width: 4, height: 1, backgroundColor: 'red'}}
+            key={trigger}
+            testID={trigger}
+            onPress={() => onTriggerPressed(trigger)} />
+        );
+      })}
+    </View>
   );
 }
 
@@ -40,7 +40,8 @@ class Container extends React.Component {
   constructor() {
     super();
     this.state = {
-      TestedComponent: undefined
+      TestedComponent: undefined,
+      testKey: ''
     }
   }
   componentDidMount() {
@@ -55,21 +56,28 @@ class Container extends React.Component {
         this.setState({TestedComponent: getWrappedComponent(TestedComponent,props,triggers)});
       }
     });
+  }
+
+  onReceiveTestKey = () => {
+    testKey = this.state.testKey;
     run();
   }
   renderLoader() {
     return (
       <View style={{
-        flexDirection: 'row',
+        flexDirection: 'column',
         justifyContent: 'space-around',
         padding: 10,
         flex: 1,
         justifyContent: 'center'
       }}>
-        <ActivityIndicator size="large" color="black" />
+        <TextInput style={{fontSize: 1}} testID="testKeyInput" onChangeText={(text) => this.setState({testKey: text})} value={this.state.testKey} />
+        <TouchableOpacity testID="submitTestKey" onPress={this.onReceiveTestKey}>
+          <ActivityIndicator size="large" color="black" />
+        </TouchableOpacity>
       </View>);
   }
-  
+
   renderComponent() {
     return (
       <View style={{height: Dimensions.get('window').height}}>
@@ -110,62 +118,31 @@ global.kompot = {
   registerProvider: (provider) => providers.push(provider),
 };
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
-function run() {
-  Promise.all([fetchAndSetTriggers(), fetchAndSetGlobals(), fetchAndSetProps(), fetchCurrentComponent()]).then(() => {
+async function run() {
+  try {
+    const response = await originalFetch(`http://localhost:2600/getComponentToTest?testKey=${testKey}`, {method: 'GET', headers: {"Content-Type": "application/json"}});
+    const info = await response.json();
+    global[info.componentName] = true;
+    global.componentProps = deSerialize(info.props);
+    info.globals.forEach(key => global[key] = true);
+    info.triggers.forEach(key => global.triggers[key] = true);
     requireComponentSpecFile();
-  })
-}
-
-async function fetchAndSetGlobals() {
-  try {
-    const response = await originalFetch('http://localhost:2600/getGlobals', {method: 'GET', headers: {"Content-Type": "application/json"}});
-    const globals = await response.json();
-    Object.keys(globals).forEach(key => global[key] = true);
   } catch (e) {
-    console.error('Cannot fetch globals: ', e.message);
+    console.error('Fail to run kompot: ', e);
   }
 }
 
-async function fetchAndSetTriggers() {
-  try {
-    const response = await originalFetch('http://localhost:2600/getTriggers', {method: 'GET', headers: {"Content-Type": "application/json"}});
-    const triggersObj = await response.json();
-    Object.keys(triggersObj).forEach(key => global.triggers[key] = true);
-  } catch (e) {
-    console.error('Cannot fetch triggers: ', e.message);
-  }
-}
-
-async function fetchCurrentComponent() {
-  try {
-    const response = await originalFetch('http://localhost:2600/getCurrentComponent', {method: 'GET', headers: {"Content-Type": "application/json"}});
-    const currentComponent = await response.text();
-    global[currentComponent] = true;
-  } catch (e) {
-    console.error('Cannot fetch currentComponent: ', e.message);
-  }
-}
-
-async function fetchAndSetProps() {
-  try {
-    const response = await originalFetch('http://localhost:2600/getProps', {method: 'GET', headers: {"Content-Type": "text/plain"}});
-    const stringProps = await response.text();
-    global.componentProps = deSerialize(decodeURIComponent(stringProps));
-  } catch (e) {
-    console.error('Cannot fetch props: ', e.message);
-  }
-}
 
 async function notifySpyTriggered(body) {
   try {
-    await originalFetch('http://localhost:2600/notifySpy', {method: 'POST', body, headers: {"Content-Type": "application/json"}});
+    await originalFetch(`http://localhost:2600/${testKey}/notifySpy`, {method: 'POST', body, headers: {"Content-Type": "application/json"}});
   } catch (e) {
     console.log('Cannot set spy: ', e.message);
   }
 }
 
 function kompotCodeInjector() {
-  try{
+  try {
     const mocks = requireGlobalMocks.map(getMocks => getMocks());
     const injectorObject = Object.assign({}, ...mocks);
     injectorObject.default && injectorObject.default();
@@ -177,7 +154,7 @@ function kompotCodeInjector() {
         global.triggers[key] = injectorObject[key];
       }
     });
-  } catch(e) {
+  } catch (e) {
     console.error('Failed to apply mocks:', e);
   }
 }

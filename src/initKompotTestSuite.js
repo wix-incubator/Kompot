@@ -1,8 +1,8 @@
 const fetch = require('node-fetch');
-const {isObject, isEqual} = require('lodash');
-
+const {isEqual} = require('lodash');
+let testKey;
 async function fetchSpyCalls(id) {
-  const response = await fetch(`http://localhost:2600/getSpy?spyId=${id}`);
+  const response = await fetch(`http://localhost:2600/${testKey}/getSpy?spyId=${id}`);
   const text = await response.text();
   if (text) {
     return JSON.parse(text);
@@ -90,6 +90,7 @@ function spyHandlers(spy) {
 }
 
 module.exports = {
+  setTestIdForSpies: (id) =>  testKey = id,
   init: () => {
     originalExpect = global.expect;
     global.expect = kompotExpect;
