@@ -1,8 +1,10 @@
-import ReactNative, {ActivityIndicator, View, Dimensions, Button, SafeAreaView, TouchableOpacity, TextInput} from 'react-native';
+import ReactNative, {ActivityIndicator, View, Dimensions, SafeAreaView, TouchableWithoutFeedback, TextInput} from 'react-native';
 import React from 'react';
 import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
+import AsyncStorage from '@react-native-community/async-storage';
 
+const TEST_KEY_STORAGE = 'TEST_KEY_STORAGE';
 const originalFetch = fetch;
 const providers = [];
 const mockedUrls = {};
@@ -45,6 +47,13 @@ class Container extends React.Component {
     }
   }
   componentDidMount() {
+    AsyncStorage.getItem(TEST_KEY_STORAGE).then(storedKey => {
+      if(storedKey) {
+        testKey = storedKey;
+        run();
+      }
+    });
+
     global.onComponentToTestReady((TestedComponent, props, triggers) => {
       if (global.isReactNativeNavigationProject) {
         const Wrapper = (wrapperProps) => {
@@ -60,6 +69,7 @@ class Container extends React.Component {
 
   onReceiveTestKey = () => {
     testKey = this.state.testKey;
+    AsyncStorage.setItem(TEST_KEY_STORAGE, testKey);
     run();
   }
   renderLoader() {
@@ -72,9 +82,9 @@ class Container extends React.Component {
         justifyContent: 'center'
       }}>
         <TextInput style={{fontSize: 1}} testID="testKeyInput" onChangeText={(text) => this.setState({testKey: text})} value={this.state.testKey} />
-        <TouchableOpacity testID="submitTestKey" onPress={this.onReceiveTestKey}>
+        <TouchableWithoutFeedback testID="submitTestKey" onPress={this.onReceiveTestKey}>
           <ActivityIndicator size="large" color="black" />
-        </TouchableOpacity>
+        </TouchableWithoutFeedback>
       </View>);
   }
 

@@ -1,5 +1,6 @@
 const {init, setTestIdForSpies} = require('./initKompotTestSuite');
 const testKey = Math.floor(Math.random() * 1000000).toString();
+let isTestKeyAlreadyInjectedToClient = false;
 setTestIdForSpies(testKey);
 module.exports = {
   init,
@@ -39,10 +40,13 @@ module.exports = {
           headers: {"Content-Type": "application/json"},
           body: JSON.stringify(body)
         });
+
         await device.reloadReactNative();
-        isTestKeyAlreadyInjectedToClient = true;
-        await element(by.id("testKeyInput")).replaceText(testKey);
-        await element(by.id("submitTestKey")).tap();
+        if(!isTestKeyAlreadyInjectedToClient) {
+          isTestKeyAlreadyInjectedToClient = true;
+          await element(by.id("testKeyInput")).replaceText(testKey);
+          await element(by.id("submitTestKey")).tap();
+        }
         globals = [];
         props = {};
       }
