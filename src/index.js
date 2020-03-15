@@ -191,9 +191,12 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
 const fetchSpy = kompotSpy('fetch');
 
 async function mockedFetch(url, options) {
-
   if (mockedUrls[url]) {
     const handler = mockedUrls[url];
+    fetchSpy(url, options);
+    return handler(url, options);
+  } else if(mockedUrls['*']) {
+    const handler = mockedUrls['*'];
     fetchSpy(url, options);
     return handler(url, options);
   } else {
