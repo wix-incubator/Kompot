@@ -61,10 +61,10 @@ function spyHandlers(spy) {
           }
         });
         if (!foundCallWithMatchedArgs) {
-          throw Error(`Expected spy with id "${spy.id}" to have been called with:\n\n ${args}\n But it was called with:\n${calls}`);
+          throw Error(`Expected spy with id "${spy.id}" to have been called with:\n\n ${JSON.stringify(args)}\n But it was called with:\n${calls}`);
         }
       } else {
-          throw Error(`Expected spy with id "${spy.id}" to have been called with:\n\n ${args}\n But it was never called`);
+          throw Error(`Expected spy with id "${spy.id}" to have been called with:\n\n ${JSON.stringify(args)}\n But it was never called`);
       }
     },
 

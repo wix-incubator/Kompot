@@ -3,11 +3,13 @@ import React from 'react';
 import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
 import AsyncStorage from '@react-native-community/async-storage';
+import UrlPattern from 'url-pattern';
 
 const TEST_KEY_STORAGE = 'TEST_KEY_STORAGE';
 const originalFetch = fetch;
 const providers = [];
-const mockedUrls = {};
+const mockedUrlsPatterns = [];
+let globalFetchHandler;
 let testKey;
 const renderTriggers = (triggers) => {
   const onTriggerPressed = (trigger) => global.triggers[trigger] && global.triggers[trigger]();
@@ -191,19 +193,26 @@ function spyOn(object, methodName, spyId, stringifyArgs) {
 const fetchSpy = kompotSpy('fetch');
 
 async function mockedFetch(url, options) {
-  if (mockedUrls[url]) {
-    const handler = mockedUrls[url];
+  const matchedMock = mockedUrlsPatterns.find((mock) => {
+    const [basePart, query] = url.split('?');
+    return mock.pattern.match(basePart) !== null;
+  });
+  if(matchedMock) {
     fetchSpy(url, options);
-    return handler(url, options);
-  } else if(mockedUrls['*']) {
-    const handler = mockedUrls['*'];
-    fetchSpy(url, options);
-    return handler(url, options);
-  } else {
-    return originalFetch(url, options);
+    return matchedMock.handler(url, options);
   }
+  if(globalFetchHandler) {
+    fetchSpy(url, options);
+    return globalFetchHandler(url, options)
+  }
+  return originalFetch(url, options);
 }
 
 function mockFetchUrl(url, handler) {
-  mockedUrls[url] = handler;
+  const escapedUrl = url.replace('https://', 'https\\://').replace('http://', 'http\\://');
+  if(url === '*') {
+    globalFetchHandler = handler;
+  } else {
+    mockedUrlsPatterns.push({pattern: new UrlPattern(escapedUrl), handler});
+  }
 }
