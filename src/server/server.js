@@ -13,9 +13,9 @@ const app = express();
 const data = {};
 const spies = {}
 
-app.use(bodyParser.json());
+app.use( bodyParser.json() );
 app.post('/setComponentToTest', (req, res) => {
-  log('setting component', req.body);
+  log('setting component',req.body);
   data[req.body.testKey] = {
     componentName: req.body.componentName,
     globals: req.body.globals,
@@ -33,32 +33,28 @@ app.get('/getComponentToTest', (req, res) => {
 
 
 app.post('/:testKey/notifySpy', (req, res) => {
-  try {
-    const spyId = req.body.id;
-    log('Setting spy', req.params.testKey, req.body);
-    if (!spies[req.params.testKey][spyId]) {
-      spies[req.params.testKey][spyId] = [];
-    }
-    spies[req.params.testKey][spyId].push(req.body.stringArgs);
-    res.send();
-  } catch (e) {
-    log(e);
+  const spyId = req.body.id;
+  log('Setting spy', req.params.testKey, req.body);
+  if(!spies[req.params.testKey][spyId]) {
+    spies[req.params.testKey][spyId] = [];
   }
+  spies[req.params.testKey][spyId].push(req.body.stringArgs);
+  res.send();
 })
 
 app.get('/:testKey/getSpy', (req, res) => {
-  log('get spy:', req.params.testKey, req.query.spyId, spies[req.params.testKey][req.query.spyId]);
+  log('get spy:',req.params.testKey, req.query.spyId, spies[req.params.testKey][req.query.spyId]);
   res.send(spies[req.params.testKey][req.query.spyId]);
 })
 
 app.get('/', (req, res) => {
-  res.send('Kompot server is running');
+    res.send('Kompot server is running');
 })
 
 app.listen(2600, () => console.log(`Kompot server listening on port 2600`));
 
-function log(...params) {
-  if (!args.silent) {
+function log(...params){
+  if(!args.silent) {
     console.log(...params);
   }
 }
