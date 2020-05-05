@@ -1,6 +1,6 @@
 {
   "name": "kompot",
-  "version": "5.2.0",
+  "version": "5.2.2",
   "main": "src/kompot.js",
   "bin": {
     "kompot": "./src/scripts/kompot-cli.js"
