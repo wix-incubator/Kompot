@@ -50,7 +50,7 @@ class Container extends React.Component {
   }
   componentDidMount() {
     AsyncStorage.getItem(TEST_KEY_STORAGE).then(storedKey => {
-      if(storedKey) {
+      if (storedKey) {
         testKey = storedKey;
         run();
       }
@@ -62,9 +62,9 @@ class Container extends React.Component {
           return getWrappedComponent(TestedComponent, {...wrapperProps, ...props}, triggers);
         }
         hoistNonReactStatics(Wrapper, TestedComponent);
-        global.registerComponentAsRoot('kompotComponent' , Wrapper, {...props});
+        global.registerComponentAsRoot('kompotComponent', Wrapper, {...props});
       } else {
-        this.setState({TestedComponent: getWrappedComponent(TestedComponent,props,triggers)});
+        this.setState({TestedComponent: getWrappedComponent(TestedComponent, props, triggers)});
       }
     });
   }
@@ -153,19 +153,19 @@ async function notifySpyTriggered(body) {
   }
 }
 
-function kompotCodeInjector() {
+async function kompotCodeInjector() {
   try {
     const mocks = requireGlobalMocks.map(getMocks => getMocks());
     const injectorObject = Object.assign({}, ...mocks);
     injectorObject.default && injectorObject.default();
-    Object.keys(injectorObject).forEach(key => {
+    for (let key in injectorObject) {
       if (key !== 'default' && global[key]) {
-        injectorObject[key]();
+        await injectorObject[key]();
       }
       if (global.triggers[key]) {
         global.triggers[key] = injectorObject[key];
       }
-    });
+    }
   } catch (e) {
     console.error('Failed to apply mocks:', e);
   }
@@ -197,11 +197,11 @@ async function mockedFetch(url, options) {
     const [basePart, query] = url.split('?');
     return mock.pattern.match(basePart) !== null;
   });
-  if(matchedMock) {
+  if (matchedMock) {
     fetchSpy(url, options);
     return matchedMock.handler(url, options);
   }
-  if(globalFetchHandler) {
+  if (globalFetchHandler) {
     fetchSpy(url, options);
     return globalFetchHandler(url, options)
   }
@@ -210,7 +210,7 @@ async function mockedFetch(url, options) {
 
 function mockFetchUrl(url, handler) {
   const escapedUrl = url.replace('https://', 'https\\://').replace('http://', 'http\\://');
-  if(url === '*') {
+  if (url === '*') {
     globalFetchHandler = handler;
   } else {
     mockedUrlsPatterns.push({pattern: new UrlPattern(escapedUrl), handler});

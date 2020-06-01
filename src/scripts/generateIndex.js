@@ -41,7 +41,7 @@ const requireStatements = filePathList
     const dataFromFile = extractDataFromFile(filePath);
     const fileName = Path.basename(dataFromFile.requirePath);
     return `if(global['${fileName}']){
-      global.kompotCodeInjector();
+      await global.kompotCodeInjector();
       currentComponent = require('${dataFromFile.requirePath}')${dataFromFile.requireMember? `.${dataFromFile.requireMember}`: ''};
       if(!currentComponent) {
         throw new Error('Component is undefined: Please check your kompotRequire statement in ${filePath}');
@@ -64,7 +64,7 @@ if(args.load){
   loadMocksFile = `require('${Path.resolve(args.load)}');`
 }
 const requireStatementsFunction = `
-export default function(){
+export default async function(){
   let currentComponent;
   ${requireStatements}
   global.KompotApp(currentComponent);
