@@ -12,6 +12,7 @@
   },
   "files": [
     "src",
+    "index.d.ts",
     "index.android.js",
     "index.ios.js",
     "metro.config.js"
