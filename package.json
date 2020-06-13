@@ -29,6 +29,8 @@
     "url-pattern": "^1.0.3"
   },
   "devDependencies": {
+    "@types/detox": "^16.4.1",
+    "@types/jest": "^26.0.0",
     "typescript": "^3.9.3"
   }
 }
