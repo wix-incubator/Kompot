@@ -12,5 +12,5 @@ declare namespace kompot {
   function spy(id: string, getReturnValue?: (args: any[]) => any, stringifyArgs?: (args: any[]) => string[]): any
   function kompotRequire(pathToComponent: string): { [key: string]: TestComponent };
   function init(): void;
-  function expect(value: any): jest.Matchers<any> & Detox.Expect<any>
+  function expect<T>(value: T): jest.Matchers<T> & Detox.Expect<T>
 }
