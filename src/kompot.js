@@ -49,8 +49,7 @@ module.exports = {
         }
         globals = [];
         props = {};
-      },
-      expect
+      }
     };
 
     const handler = {
@@ -63,5 +62,7 @@ module.exports = {
       }
     }
     return new Proxy(testComponentBuilder, handler);
-  }
+  },
+
+  expect
 };
