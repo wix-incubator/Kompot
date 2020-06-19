@@ -109,7 +109,7 @@ function extractDataFromFile(filePath) {
 }
 
 function getAllFilesWithKompotExtension() {
-  const allFilesWithKompotExtention = execSync(`find . -not \\( -path ./node_modules -prune \\)  -not \\( -path ./.idea -prune \\)  -type f  -name '*.kompot.*.js'`).toString();
+  const allFilesWithKompotExtention = execSync(`find . -not \\( -path ./node_modules -prune \\)  -not \\( -path ./.idea -prune \\)  -type f  -name '*.kompot.*.js' -or -name '*.kompot.*.ts`).toString();
   const filePathList = allFilesWithKompotExtention.split('\n').filter(path => path !== '');
   return filePathList;
 }
