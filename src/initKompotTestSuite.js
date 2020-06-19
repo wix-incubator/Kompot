@@ -94,5 +94,6 @@ module.exports = {
   init: () => {
     originalExpect = global.expect;
     global.expect = kompotExpect;
-  }
+  },
+  expect: kompotExpect
 }
