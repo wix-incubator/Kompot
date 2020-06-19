@@ -23,7 +23,7 @@ declare namespace kompot {
   function init(): void;
   function expect<T>(value: T): jest.Matchers<T> & Detox.Expect<T> & {notToHaveBeenCalled(): Promise<void>};
   function mockFetchUrl(url: string, cb: (url?: string) => Response): void;
-  function useMocks(getMocks: () => {[key: string]: () => void}): void;
+  function useMocks(getMocks: () => {[key: string]: () => Promise<void>}): void;
   function registerProviders<P>(provider: Provider<P>): void;
 
   const savedComponentRef: React.RefObject<any> | null;
