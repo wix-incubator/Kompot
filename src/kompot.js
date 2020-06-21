@@ -1,4 +1,4 @@
-const {init, setTestIdForSpies} = require('./initKompotTestSuite');
+const {init, setTestIdForSpies, expect} = require('./initKompotTestSuite');
 const testKey = Math.floor(Math.random() * 1000000).toString();
 let isTestKeyAlreadyInjectedToClient = false;
 setTestIdForSpies(testKey);
@@ -62,5 +62,7 @@ module.exports = {
       }
     }
     return new Proxy(testComponentBuilder, handler);
-  }
+  },
+
+  expect
 };
