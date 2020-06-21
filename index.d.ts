@@ -14,7 +14,7 @@ type Provider<P> = {
 }
 
 export function init(): void;
-export function expect<T>(value: T): jest.Matchers<T> & Detox.Expect<T> & {notToHaveBeenCalled(): Promise<void>};
+export function expect<T>(value: T): jest.Matchers<T> & Detox.Expect<Promise<T>> & {notToHaveBeenCalled(): Promise<void>};
 export function kompotRequire(pathToComponent: string): { [key: string]: TestComponent };
 
 declare global {
@@ -28,4 +28,6 @@ declare global {
     const savedComponentRef: React.RefObject<any> | null;
     const componentProps: {[key: string]: any};
   }
+
+  function spy(spyId: string): any;
 }
