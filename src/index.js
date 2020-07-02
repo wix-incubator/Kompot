@@ -146,12 +146,13 @@ async function run() {
 
 
 async function notifySpyTriggered(body) {
-  try {
-    await originalFetch(`http://localhost:2600/${testKey}/notifySpy`, {method: 'POST', body, headers: {"Content-Type": "application/json"}});
-  } catch (e) {
-    console.log('Cannot set spy: ', e.message);
+  if(testKey) {
+    try {
+      await originalFetch(`http://localhost:2600/${testKey}/notifySpy`, {method: 'POST', body, headers: {"Content-Type": "application/json"}});
+    } catch (e) {
+      console.log('Cannot set spy: ', e.message);
+    }
   }
-}
 
 async function kompotCodeInjector() {
   try {
