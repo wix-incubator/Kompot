@@ -153,6 +153,7 @@ async function notifySpyTriggered(body) {
       console.log('Cannot set spy: ', e.message);
     }
   }
+}
 
 async function kompotCodeInjector() {
   try {
