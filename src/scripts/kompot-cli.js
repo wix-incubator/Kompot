@@ -113,7 +113,7 @@ const start = command === COMMANDS.START;
 
 //todo: remove separate command and use only start:
 if (args.kill || start) {
-  execSync(`lsof -i:8081 | awk 'NR!=1 {print $2}' | xargs kill && lsof -i:2600 | awk 'NR!=1 {print $2}' | xargs kill`, (e, stdout, stderr) => {
+  execSync(`lsof -ti tcp:8081 | xargs kill; lsof -ti tcp:2600 | xargs kill`, (e, stdout, stderr) => {
     if (e instanceof Error) {
       console.error(e);
       throw e;
