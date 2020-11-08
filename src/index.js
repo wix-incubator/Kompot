@@ -130,6 +130,7 @@ global.kompot = {
   registerProvider: (provider) => providers.push(provider),
 };
 const requireComponentSpecFile = require('./generatedRequireKompotSpecs').default;
+console.log(requireComponentSpecFile); //a hack to solve require problem- the required code is not running until we use it. this log is just for faking usage.
 async function run() {
   try {
     const response = await originalFetch(`http://localhost:2600/getComponentToTest?testKey=${testKey}`, {method: 'GET', headers: {"Content-Type": "application/json"}});
