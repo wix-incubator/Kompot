@@ -1,4 +1,4 @@
-import ReactNative, {ActivityIndicator, View, Dimensions, SafeAreaView, TouchableWithoutFeedback, TextInput} from 'react-native';
+import ReactNative, {Text, View, Dimensions, SafeAreaView, TouchableWithoutFeedback, TextInput} from 'react-native';
 import React from 'react';
 import {deSerialize} from './Serialize';
 import hoistNonReactStatics from 'hoist-non-react-statics';
@@ -85,7 +85,9 @@ class Container extends React.Component {
       }}>
         <TextInput style={{fontSize: 1}} testID="testKeyInput" onChangeText={(text) => this.setState({testKey: text})} value={this.state.testKey} />
         <TouchableWithoutFeedback testID="submitTestKey" onPress={this.onReceiveTestKey}>
-          <ActivityIndicator size="large" color="black" />
+          <View style={{flex: 1, justifyContent: 'center', alignItems: 'center'}}>
+            <Text>Initializing kompot...</Text>
+          </View>
         </TouchableWithoutFeedback>
       </View>);
   }
